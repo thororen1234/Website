@@ -1,0 +1,18 @@
+---
+import { Metadata } from '@/consts'
+import '@/styles/global.css'
+
+import Head from '@/components/Layout/Head.astro'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <Head {...Metadata} />
+    </head>
+    <body class="min-h-screen">
+        <ThemeToggle />
+        <slot />
+    </body>
+</html>

@@ -1,0 +1,18 @@
+---
+import { Metadata } from '@/consts'
+
+interface Props {
+    size: number
+}
+
+const { size } = Astro.props
+---
+
+<img
+    src="https://avatars.githubusercontent.com/u/81579850"
+    alt={Metadata.title}
+    width={size}
+    height={size}
+    draggable={false}
+    class="rounded-full border border-zinc-300 bg-zinc-100 p-0.5 shadow select-none dark:border-zinc-800 dark:bg-zinc-900"
+/>

@@ -1,0 +1,63 @@
+---
+import type { Project } from '@/types'
+import { Icon } from 'astro-icon/components'
+
+import Box from '@/components/Base/Box.astro'
+import Tag from '@/components/Base/Tag.astro'
+
+const { icon, role, start, end, title, description, tasks, url } =
+    Astro.props as Project
+
+const date = end ? `${start} - ${end}` : `Since ${start}`
+const hasTasks = tasks.length > 0
+const isExternal = url?.startsWith('http')
+---
+
+<a
+    href={url}
+    target={isExternal ? '_blank' : undefined}
+    class="flex-1 transition-transform active:scale-[.98]"
+>
+    <Box className="gap-2">
+        <!-- Title -->
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <img
+                    src={icon}
+                    alt={title}
+                    width={24}
+                    draggable={false}
+                    class="opacity-60 select-none dark:invert"
+                />
+                <h4 class="font-medium text-neutral-700 dark:text-neutral-200">
+                    {title}
+                </h4>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="flex flex-wrap items-center gap-2">
+            <Tag>{role}</Tag>
+            <Tag>
+                <Icon name="ph:calendar-blank" size={16} />
+                {date}
+            </Tag>
+        </div>
+
+        <!-- Description -->
+        <p class="text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+            {description}
+        </p>
+
+        <!-- Tasks -->
+        {
+            hasTasks && (
+                <ul class="list-disc space-y-1 pl-5 text-sm text-neutral-600 dark:text-neutral-400">
+                    {tasks.map((task) => (
+                        <li>{task}</li>
+                    ))}
+                </ul>
+            )
+        }
+    </Box>
+</a>

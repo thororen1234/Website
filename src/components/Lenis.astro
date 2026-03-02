@@ -1,0 +1,22 @@
+<script>
+    import Lenis from 'lenis'
+
+    // Apparently this is broken on firefox lul
+    const lenis = new Lenis({
+        duration: 1.2,
+        // easing: (t) => 1 - Math.pow(1 - t, 4),
+        lerp: 0.6,
+        
+    })
+
+    // lenis.on('scroll', (e) => {
+    //     console.log(e)
+    // })
+
+    function raf(t: number) {
+        lenis.raf(t)
+        requestAnimationFrame(raf)
+    }
+
+    requestAnimationFrame(raf)
+</script>

@@ -1,0 +1,51 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { Skills, Projects } from '@/consts'
+import { Icon } from 'astro-icon/components'
+
+import Box from '@/components/Base/Box.astro'
+import Tag from '@/components/Base/Tag.astro'
+
+import SkillCard from '@/components/Cards/SkillCard.astro'
+import ProjectCard from '@/components/Cards/ProjectCard.astro'
+---
+
+<Layout>
+    <!-- Me -->
+    <span
+        class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
+    >
+        <Icon name="ph:user" size={20} /> Me
+    </span>
+
+    <Box className="text-sm leading-6">
+        Heya! I'm Naibuu, also known as Alex. I'm a software developer and
+        graphic designer from Greece, with experience in both web and software
+        development. I also bring strong expertise in graphic design with a
+        refined eye for detail and aesthetics.
+    </Box>
+
+    <!-- Skills -->
+    <span
+        class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
+    >
+        <Icon name="ph:star" size={20} /> Experience <Tag
+            className="bg-zinc-300">6 Years</Tag
+        >
+    </span>
+
+    <Box className="gap-3">
+        {Skills.map((skill) => <SkillCard {...skill} />)}
+    </Box>
+
+    <!-- Projects -->
+    <span
+        class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
+    >
+        <Icon name="ph:read-cv-logo" size={20} /> Work
+    </span>
+
+    <div class="flex flex-col gap-3">
+        {Projects.map((project) => <ProjectCard {...project} />)}
+    </div>
+</Layout>
