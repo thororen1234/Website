@@ -1,9 +1,13 @@
-<footer class="max-sm:flex-col max-sm:justify-center flex items-center justify-between py-12 text-sm">
+---
+import { Icon } from 'astro-icon/components'
+---
+
+<footer class="max-sm:flex-col max-sm:gap-1 max-sm:justify-center flex items-center justify-between py-12 text-sm">
     <span class="font-medium text-neutral-600 dark:text-neutral-400">
         © {new Date().getFullYear()} Naibuu
     </span>
 
-    <p class="font-medium text-neutral-600 dark:text-neutral-400">
-        If you are reading this - have a great day ツ
-    </p>
+    <a href="https://github.com/Naibuu/Website" class="font-medium active:scale-95 transition-transform text-neutral-600 dark:text-neutral-400">
+          <Icon name="ph:github-logo" size={16} class="inline" /> Source Code
+    </a>
 </footer>
