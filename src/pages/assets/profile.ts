@@ -1,7 +1,7 @@
 // https://github.com/thororen1234/website/blob/main/src/pages/assets/profile.ts
 
 const userId = '1120045713867423835'
-const fallbackUrl = 'https://www.thororen.com/assets/fallback.png'
+const fallbackUrl = 'https://naibuu.dev/assets/fallback.png'
 
 async function getFallback(): Promise<ArrayBuffer> {
     const response = await fetch(fallbackUrl)
