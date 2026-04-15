@@ -3,7 +3,7 @@ import type { Social, Skill, Project } from './types'
 export const Metadata: { title: string; description: string } = {
     title: 'Naibuu',
     description:
-        "Heya! I'm Naibuu, also known as Alex. I'm a software developer and graphic designer from Greece, with experience in both web and software development. I also bring strong expertise in graphic design with a refined eye for detail and aesthetics.",
+        "Heya! I'm Alex, also known as Naibuu. I'm a software developer and graphic designer from Greece, with experience in both web and software development. I also bring strong expertise in graphic design with a refined eye for detail and aesthetics.",
 }
 
 export const Information: {
