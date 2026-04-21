@@ -15,7 +15,7 @@ async function getFallback(): Promise<ArrayBuffer> {
 }
 
 async function getAvatar(): Promise<ArrayBuffer> {
-    const lanyardUrl = `https://api.lanyard.rest/v1/users/${userId}`
+    const lanyardUrl = `https://lanyard.equicord.org/v1/users/${userId}`
     const lanyard = await fetch(lanyardUrl)
 
     if (!lanyard.ok) {

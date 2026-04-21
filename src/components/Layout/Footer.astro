@@ -2,12 +2,17 @@
 import { Icon } from 'astro-icon/components'
 ---
 
-<footer class="max-sm:flex-col max-sm:gap-1 max-sm:justify-center flex items-center justify-between py-12 text-sm">
+<footer
+    class="flex items-center justify-between py-12 text-sm max-sm:flex-col max-sm:justify-center max-sm:gap-1"
+>
     <span class="font-medium text-neutral-600 dark:text-neutral-400">
         © {new Date().getFullYear()} Naibuu
     </span>
 
-    <a href="https://github.com/Naibuu/Website" class="font-medium active:scale-95 transition-transform text-neutral-600 dark:text-neutral-400">
-          <Icon name="ph:github-logo" size={16} class="inline" /> Source Code
+    <a
+        href="https://github.com/Naibuu/Website"
+        class="font-medium text-neutral-600 transition-transform active:scale-95 dark:text-neutral-400"
+    >
+        <Icon name="ph:github-logo" size={16} class="inline" /> Source Code
     </a>
 </footer>

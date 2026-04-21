@@ -31,6 +31,11 @@ export const Socials: Social[] = [
         icon: 'ph:discord-logo',
     },
     {
+        text: 'Behance',
+        url: 'https://s.naibuu.dev/behance',
+        icon: 'ph:behance-logo',
+    },
+    {
         text: 'Github',
         url: 'https://s.naibuu.dev/github',
         icon: 'ph:github-logo',

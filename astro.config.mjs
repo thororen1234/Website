@@ -7,11 +7,9 @@ import vercel from '@astrojs/vercel'
 // https://astro.build/config
 export default defineConfig({
     output: 'server',
-    adapter: vercel(
-        {
-            staticHeaders: true,
-        }
-    ),
+    adapter: vercel({
+        staticHeaders: true,
+    }),
     vite: {
         plugins: [tailwindcss()],
         // build: {

@@ -2,12 +2,11 @@
 import { Metadata } from '@/consts'
 import '@/styles/global.css'
 
-import Head from '@/components/Layout/Head.astro'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+import Head from '@/components/Head.astro'
+
 import Aside from '@/components/Layout/Aside.astro'
 import Footer from '@/components/Layout/Footer.astro'
-
-import Lenis from '@/components/Lenis.astro'
-import ThemeToggle from '@/components/ThemeToggle.astro'
 ---
 
 <!doctype html>
@@ -17,8 +16,6 @@ import ThemeToggle from '@/components/ThemeToggle.astro'
     </head>
     <body class="min-h-screen">
         <ThemeToggle />
-        <Lenis />
-
         <div class="flex flex-col gap-3 px-4 pt-32 md:flex-row md:gap-6">
             <Aside />
             <div class="flex flex-col gap-3">
