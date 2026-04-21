@@ -1,4 +1,4 @@
-import type { Social, Skill, Project } from './types'
+import type { Social, Skill, Project, Friend } from './types'
 
 export const Metadata: { title: string; description: string } = {
     title: 'Naibuu',
@@ -112,5 +112,13 @@ export const Projects: Project[] = [
             'Helped develop internal tools to streamline development.',
         ],
         url: 'https://github.com/hybrismc',
+    },
+]
+
+export const Friends: Friend[] = [
+    {
+        icon: 'https://www.thororen.com/assets/profile',
+        text: 'thororen',
+        url: 'https://www.thororen.com',
     },
 ]

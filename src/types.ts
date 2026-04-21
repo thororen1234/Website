@@ -36,3 +36,12 @@ export interface Project {
     /** URL */
     url: string
 }
+
+export interface Friend {
+    /** Icon */
+    icon: string
+    /** Text */
+    text: string
+    /** URL */
+    url: string
+}

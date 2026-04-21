@@ -1,5 +1,5 @@
 ---
-import { Information, Socials } from '@/consts'
+import { Friends, Information, Socials } from '@/consts'
 import { Icon } from 'astro-icon/components'
 
 import Avatar from '@/components/Base/Avatar.astro'
@@ -64,6 +64,32 @@ const isExternal = (url: string) => url.startsWith('http')
                     >
                         <Icon name={social.icon} size={20} />
                         {social.text}
+                    </a>
+                ))
+            }
+        </Box>
+
+        <!-- Friends -->
+        <span
+            class="inline-flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
+        >
+            <Icon name="ph:users" size={20} /> Friends
+        </span>
+
+        <Box className="flex-wrap justify-center gap-6" row={true}>
+            {
+                Friends.map((friend) => (
+                    <a
+                        href={friend.url}
+                        target="_blank"
+                        class="flex flex-col items-center gap-1 text-sm"
+                    >
+                        <img
+                            src={friend.icon}
+                            class="size-10 rounded-lg select-none"
+                            draggable={false}
+                        />
+                        {friend.text}
                     </a>
                 ))
             }
