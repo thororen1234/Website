@@ -43,7 +43,14 @@ async function getAvatar(): Promise<ArrayBuffer> {
 export async function GET(): Promise<Response> {
     try {
         const avatar = await getAvatar()
-        return new Response(avatar)
+
+        return new Response(avatar, {
+            headers: {
+                'Content-Type': 'image/png',
+                'Cache-Control':
+                    'public, max-age=43200, stale-while-revalidate=60',
+            },
+        })
     } catch (error) {
         const fallback = await getFallback()
         return new Response(fallback)
