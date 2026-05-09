@@ -1,8 +1,9 @@
 const DEFAULT_USER_ID = '848339671629299742'
 const DEFAULT_FALLBACK_URL = '/assets/fallback.png'
 
-async function getFallbackImage(fallbackUrl: string) {
-    const response = await fetch(fallbackUrl)
+async function getFallbackImage(fallbackUrl: string, request: Request) {
+    const absoluteUrl = new URL(fallbackUrl, request.url).toString()
+    const response = await fetch(absoluteUrl)
     if (!response.ok) {
         throw new Error('Failed to fetch fallback image')
     }
@@ -44,7 +45,7 @@ export async function GET(request: Request) {
         })
     } catch {
         try {
-            const fallbackBuffer = await getFallbackImage(fallbackUrl)
+            const fallbackBuffer = await getFallbackImage(fallbackUrl, request)
             return new Response(fallbackBuffer, {
                 headers: { 'Content-Type': 'image/png' },
             })
