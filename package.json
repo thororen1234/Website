@@ -13,11 +13,10 @@
         "start": "node dist/server/entry.mjs"
     },
     "dependencies": {
-        "@astrojs/node": "^10.0.4",
+        "@astrojs/node": "^10.1.0",
         "@lucide/astro": "^0.525.0",
         "@tailwindcss/vite": "^4.1.11",
-        "astro": "^6.1.6",
-        "classnames": "^2.5.1",
+        "astro": "^6.3.1",
         "tailwindcss": "^4.2.1",
         "typescript": "^5.9.3"
     },
