@@ -1,0 +1,28 @@
+---
+import { BookUser } from '@lucide/astro'
+import Box from '@/components/Base/Box.astro'
+---
+
+<div class="flex items-start gap-2">
+    <span class="flex gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
+        <BookUser size="18" /> Badges
+    </span>
+
+    <div
+        id="platform-icons"
+        class="mt-1 flex gap-1 text-neutral-600 dark:text-neutral-400"
+    >
+    </div>
+
+    <div
+        id="clan-badge-container"
+        class="hidden items-center gap-1 rounded-md bg-zinc-100 px-2 py-1 dark:bg-zinc-900"
+    >
+        <img id="clan-badge-img" src="" alt="Clan Badge" class="h-3 w-3" />
+        <span id="clan-badge-name" class="text-xs text-neutral-700 dark:text-neutral-200"></span>
+    </div>
+</div>
+
+<Box>
+    <div id="badges-container" class="mt-1 flex flex-wrap gap-2"></div>
+</Box>

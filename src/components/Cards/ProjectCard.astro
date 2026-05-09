@@ -1,63 +1,33 @@
 ---
 import type { Project } from '@/types'
-import { Icon } from 'astro-icon/components'
+import { Calendar } from '@lucide/astro'
 
-import Box from '@/components/Base/Box.astro'
-import Tag from '@/components/Base/Tag.astro'
+interface Props extends Project {}
 
-const { icon, role, start, end, title, description, tasks, url } =
-    Astro.props as Project
-
-const date = end ? `${start} - ${end}` : `Since ${start}`
-const hasTasks = tasks.length > 0
-const isExternal = url?.startsWith('http')
+const { start, end, title, description, url } = Astro.props
 ---
 
 <a
     href={url}
-    target={isExternal ? '_blank' : undefined}
+    target="_blank"
     class="flex-1 transition-transform active:scale-[.98]"
 >
-    <Box className="gap-2">
-        <!-- Title -->
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <img
-                    src={icon}
-                    alt={title}
-                    width={24}
-                    draggable={false}
-                    class="opacity-60 select-none dark:invert"
-                />
-                <h4 class="font-medium text-neutral-700 dark:text-neutral-200">
-                    {title}
-                </h4>
-            </div>
-        </div>
+    <div
+        class="flex h-40 min-w-96 flex-col gap-1 rounded-2xl border border-zinc-300 bg-zinc-100 px-8 py-6 text-neutral-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300"
+    >
+        <h4
+            class="flex items-center gap-2 font-medium text-neutral-800 dark:text-neutral-200"
+        >
+            {title}
 
-        <!-- Meta -->
-        <div class="flex flex-wrap items-center gap-2">
-            <Tag>{role}</Tag>
-            <Tag>
-                <Icon name="ph:calendar-blank" size={16} />
-                {date}
-            </Tag>
-        </div>
+            <span class="flex items-center gap-1 text-sm">
+                <Calendar size={16} fill="#ffffff10" />
+                {end ? `${start} - ${end}` : `Since ${start}`}
+            </span>
+        </h4>
 
-        <!-- Description -->
-        <p class="text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+        <p class="text-xs leading-5 text-neutral-500 dark:text-neutral-400">
             {description}
         </p>
-
-        <!-- Tasks -->
-        {
-            hasTasks && (
-                <ul class="list-disc space-y-1 pl-5 text-sm text-neutral-600 dark:text-neutral-400">
-                    {tasks.map((task) => (
-                        <li>{task}</li>
-                    ))}
-                </ul>
-            )
-        }
-    </Box>
+    </div>
 </a>

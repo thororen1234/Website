@@ -1,47 +1,34 @@
+import type { AstroComponent as LucideComponent } from '@lucide/astro'
+
 export type Theme = 'light' | 'dark'
 
-export interface Social {
-    /** Icon */
-    icon: string
-    /** Text */
+export interface Info {
+    icon: LucideComponent
     text: string
-    /** URL */
+}
+
+export interface Social extends Info {
     url: string
 }
 
 export interface Skill {
-    /** Text */
     text: string
-    /** Description */
     description: string
-    /** Progress */
     progress: number
 }
 
 export interface Project {
-    /** Icon */
-    icon: string
-    /** Title */
-    title: string
-    /** Description */
-    description: string
-    /** Role */
-    role: string
-    /** Start year */
     start: number
-    /** End year */
     end?: number
-    /** Tasks */
-    tasks: string[]
-    /** URL */
+    title: string
+    description: string
     url: string
 }
 
-export interface Friend {
-    /** Icon */
-    icon: string
-    /** Text */
-    text: string
-    /** URL */
+export interface Product {
     url: string
+    cover: string
+    title: string
+    description: string
+    price: number // 0 = Free
 }

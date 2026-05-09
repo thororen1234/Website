@@ -1,0 +1,19 @@
+---
+const { url, img, alt, name } = Astro.props
+---
+
+<div class="min-w-0 overflow-hidden">
+    <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        class="group flex flex-col items-center gap-1 text-center"
+    >
+        <img src={img} alt={alt} class="size-10 rounded-md object-cover" />
+        <span
+            class="truncate text-xs text-neutral-700 group-hover:text-rose-500 dark:text-neutral-200"
+        >
+            {name}
+        </span>
+    </a>
+</div>

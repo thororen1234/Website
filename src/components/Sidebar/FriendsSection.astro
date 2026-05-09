@@ -1,0 +1,28 @@
+---
+import { Users } from '@lucide/astro'
+import { Friends } from '@/consts'
+import FriendCard from '@/components/Cards/FriendCard.astro'
+import Box from '@/components/Base/Box.astro'
+---
+
+<span
+    class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
+>
+    <Users size="18" /> Friends
+</span>
+
+<Box class="grid grid-cols-2 gap-4">
+    {
+        Friends.map((friend, i) => (
+            <div
+                class={
+                    Friends.length % 2 !== 0 && i === Friends.length - 1
+                        ? 'col-span-2 flex justify-center'
+                        : ''
+                }
+            >
+                <FriendCard {...friend} />
+            </div>
+        ))
+    }
+</Box>

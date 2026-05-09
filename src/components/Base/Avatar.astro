@@ -1,6 +1,4 @@
 ---
-import { Metadata } from '@/consts'
-
 interface Props {
     size: number
 }
@@ -8,11 +6,110 @@ interface Props {
 const { size } = Astro.props
 ---
 
-<img
-    src="/assets/profile.png"
-    alt={Metadata.title}
-    width={size}
-    height={size}
-    draggable={false}
-    class="rounded-full border border-zinc-300 bg-zinc-100 p-0.5 shadow select-none dark:border-zinc-800 dark:bg-zinc-900"
-/>
+<div
+    style=`position: relative; display: inline-block; width: ${size}px; height: ${size}px;`
+>
+    <img
+        id="user-avatar"
+        src=""
+        class="rounded-full border border-zinc-800 bg-zinc-900 shadow select-none"
+        style="border-radius:50%"
+        width={size}
+        height={size}
+        draggable={false}
+        alt="Discord Avatar"
+    />
+
+    <img
+        id="user-decor"
+        src=""
+        draggable={false}
+        alt="Discord Decor"
+        width={size}
+        height={size}
+        class="hidden"
+        style="
+            position: absolute;
+            inset: 0;
+            z-index: 15;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.20);
+        "
+    />
+
+    <span
+        id="user-status-indicator"
+        style=`z-index: 30; position: absolute; bottom: 4px; right: 4px; width: ${size / 4}px; height: ${size / 4}px; border-radius: 50%; border: 4px solid #1a1a1a; background-color: #949ba4;`
+        title="offline"
+    >
+    </span>
+</div>
+
+<script define:vars={{ size }}>
+    const userId = '848339671629299742'
+
+    const statusColorMap = {
+        online: '#23a55a',
+        idle: '#f0b232',
+        dnd: '#f23f43',
+        offline: '#949ba4',
+    }
+
+    async function fetchUserStatus() {
+        try {
+            const lanyardResponse = await fetch(
+                `https://lanyard.equicord.org/v1/users/${userId}`,
+            )
+            if (!lanyardResponse.ok) throw new Error('Lanyard fetch failed')
+
+            const lanyardJson = await lanyardResponse.json()
+            const lanyardData = lanyardJson?.data
+            const user = lanyardData?.discord_user
+
+            const avatarEl = document.getElementById('user-avatar')
+            if (avatarEl && user?.id && user?.avatar) {
+                avatarEl.src = `/assets/profile`
+            }
+
+            const decorEl = document.getElementById('user-decor')
+            const decorationData = user?.avatar_decoration_data
+
+            if (decorationData?.asset) {
+                if (decorEl) {
+                    decorEl.src = `https://cdn.discordapp.com/avatar-decoration-presets/${decorationData.asset}.png?size=64&passthrough=true`
+                    decorEl.classList.remove('hidden')
+                }
+            } else {
+                try {
+                    const decorApi = await fetch(
+                        `https://decor.fieryflames.dev/api/users/${userId}`,
+                    )
+                    if (decorApi.ok) {
+                        const decorData = await decorApi.json()
+                        if (decorData.decorationHash && decorEl) {
+                            decorEl.src = `https://ugc.decor.fieryflames.dev/${decorData.decorationHash}.png?animated=true`
+                            decorEl.classList.remove('hidden')
+                        }
+                    }
+                } catch (e) {
+                    console.error('Decor API error:', e)
+                }
+            }
+
+            const status = lanyardData?.discord_status || 'offline'
+            const statusEl = document.getElementById('user-status-indicator')
+            if (statusEl) {
+                statusEl.style.backgroundColor =
+                    statusColorMap[status] || statusColorMap.offline
+                statusEl.title = status
+            }
+        } catch (error) {
+            console.error('Error fetching user status:', error)
+        }
+    }
+
+    fetchUserStatus()
+</script>

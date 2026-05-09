@@ -1,18 +1,30 @@
 ---
-import { Metadata } from '@/consts'
 import '@/styles/global.css'
-
+import Head from '@/components/Layout/Head.astro'
 import ThemeToggle from '@/components/ThemeToggle.astro'
-import Head from '@/components/Head.astro'
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
-        <Head {...Metadata} />
+        <Head title="thororen" description="Page not found." />
     </head>
-    <body class="min-h-screen">
+    <body>
         <ThemeToggle />
         <slot />
+
+        <!-- thor stuff -->
+        <div style="display: none;">
+            <a
+                href="https://www.abuseipdb.com/user/201906"
+                title="AbuseIPDB is an IP address blacklist for webmasters and sysadmins to report IP addresses engaging in abusive behavior on their networks"
+            >
+                <img
+                    src="https://www.abuseipdb.com/contributor/201906.svg"
+                    alt="AbuseIPDB Contributor Badge"
+                    style="width: 401px;"
+                />
+            </a>
+        </div>
     </body>
 </html>

@@ -1,13 +1,12 @@
 ---
-import Layout from '@/layouts/Layout.astro'
+import Layout from '../layouts/Layout.astro'
 import { Skills, Projects } from '@/consts'
-import { Icon } from 'astro-icon/components'
+import { Highlighter, Notebook, Star } from '@lucide/astro'
 
 import Box from '@/components/Base/Box.astro'
-import Tag from '@/components/Base/Tag.astro'
-
 import SkillCard from '@/components/Cards/SkillCard.astro'
 import ProjectCard from '@/components/Cards/ProjectCard.astro'
+import Tag from '@/components/Base/Tag.astro'
 ---
 
 <Layout>
@@ -15,26 +14,26 @@ import ProjectCard from '@/components/Cards/ProjectCard.astro'
     <span
         class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
     >
-        <Icon name="ph:user" size={20} /> Me
+        <Highlighter size="18" fill="#ffffff10" /> Me
     </span>
 
-    <Box className="text-sm leading-6">
-        Heya! I'm Alex, also known as Naibuu. I'm a software developer and
-        graphic designer, with experience in both web and software
-        development. I also bring strong expertise in graphic design with a
-        refined eye for detail and aesthetics.
+    <Box>
+        Hi! I'm Thor! I'm a software developer from the United States of America
+        with experience in languages such as TypeScript, JavaScript, Python, and
+        Go.
     </Box>
 
     <!-- Skills -->
     <span
         class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
     >
-        <Icon name="ph:star" size={20} /> Experience <Tag
-            className="bg-zinc-300">6 Years</Tag
-        >
+        <Star size="18" fill="#ffffff10" /> Skills
+        <Tag className="bg-zinc-300">
+            {new Date().getFullYear() - 2019} Years
+        </Tag>
     </span>
 
-    <Box className="gap-3">
+    <Box>
         {Skills.map((skill) => <SkillCard {...skill} />)}
     </Box>
 
@@ -42,10 +41,10 @@ import ProjectCard from '@/components/Cards/ProjectCard.astro'
     <span
         class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
     >
-        <Icon name="ph:read-cv-logo" size={20} /> Work
+        <Notebook size="18" fill="#ffffff10" /> Projects
     </span>
 
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-wrap gap-3">
         {Projects.map((project) => <ProjectCard {...project} />)}
     </div>
 </Layout>

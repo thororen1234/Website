@@ -1,0 +1,41 @@
+---
+import { UserCircle } from '@lucide/astro'
+import { Information, MiscIcons } from '@/consts'
+import Box from '@/components/Base/Box.astro'
+---
+
+<span class="flex gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
+    <UserCircle size="18" /> About
+</span>
+
+<Box>
+    {
+        Information.map((info) => (
+            <span class="flex items-center gap-1 font-medium text-neutral-700 dark:text-neutral-200">
+                <info.icon size="18" />
+                {info.text}
+            </span>
+        ))
+    }
+
+    <span class="flex items-center gap-1 font-medium text-neutral-700 dark:text-neutral-200">
+        <MiscIcons.AlarmClock size="18" />
+        <span id="user-timezone-text">--:--</span>
+    </span>
+
+    <span
+        id="custom-status-container"
+        class="hidden items-center gap-1 font-medium text-neutral-700 dark:text-neutral-200"
+    >
+        <MiscIcons.BookOpen size="18" class="shrink-0" />
+        <span id="custom-status-text" class="truncate"></span>
+    </span>
+
+    <span
+        id="activity-container"
+        class="hidden items-center gap-1 font-medium text-neutral-700 dark:text-neutral-200"
+    >
+        <MiscIcons.ListMusic size="18" class="shrink-0" />
+        <span id="activity-text" class="truncate"></span>
+    </span>
+</Box>

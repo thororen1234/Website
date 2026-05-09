@@ -1,0 +1,22 @@
+---
+import Avatar from '@/components/Base/Avatar.astro'
+import BadgesSection from '@/components/Sidebar/BadgesSection.astro'
+import AboutSection from '@/components/Sidebar/AboutSection.astro'
+import SocialsSection from '@/components/Sidebar/SocialsSection.astro'
+import FriendsSection from '@/components/Sidebar/FriendsSection.astro'
+---
+
+<aside class="flex w-full flex-col gap-4 md:max-w-[240px]">
+    <div class="mb-2 flex w-full flex-col items-center gap-4">
+        <Avatar size={240} />
+    </div>
+
+    <BadgesSection />
+    <AboutSection />
+    <SocialsSection />
+    <FriendsSection />
+</aside>
+
+<script>
+    import '@/components/Sidebar/sidebar.ts'
+</script>

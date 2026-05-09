@@ -7,15 +7,16 @@
         "dev": "astro dev",
         "build": "astro build",
         "astro": "astro",
+        "preview": "astro preview",
         "lint": "prettier --check .",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "start": "node dist/server/entry.mjs"
     },
     "dependencies": {
-        "@astrojs/vercel": "^10.0.4",
-        "@iconify-json/ph": "^1.2.2",
-        "@tailwindcss/vite": "^4.2.1",
+        "@astrojs/node": "^10.0.4",
+        "@lucide/astro": "^0.525.0",
+        "@tailwindcss/vite": "^4.1.11",
         "astro": "^6.1.6",
-        "astro-icon": "^1.1.5",
         "classnames": "^2.5.1",
         "tailwindcss": "^4.2.1",
         "typescript": "^5.9.3"
