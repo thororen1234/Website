@@ -2,12 +2,16 @@ name: Build and Push Docker Image
 
 on:
     push:
-        branches: [ "main" ]
-        tags: [ "v*" ]
+        branches: ["main"]
+        tags: ["v*"]
 
 env:
     REGISTRY: ghcr.io
     IMAGE_NAME: ${{ github.repository }}
+
+permissions:
+    contents: read
+    packages: write
 
 jobs:
     build:
