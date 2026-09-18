@@ -60,24 +60,8 @@ async function fetchDecorUrl(lanyard: LanyardData | null) {
     return null
 }
 
-async function fetchBadges(): Promise<Badge[]> {
-    const data = await getJson(
-        `https://gb.equicord.org/${discordUserId}?seperated=true&capitalize=true`,
-    )
-
-    const badges: Badge[] = []
-    Object.entries(data?.badges ?? {}).forEach(([type, list]) => {
-        if (!Array.isArray(list)) return
-        list.forEach((badge) => {
-            if (badge?.badge) {
-                badges.push({
-                    tooltip: `${type}: ${badge.tooltip}`,
-                    icon: badge.badge,
-                })
-            }
-        })
-    })
-    return badges
+function fetchBadges(): Promise<Badge[]> {
+    return getJson('/api/badges')
 }
 
 async function fetchTimezone() {
