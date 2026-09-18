@@ -17,7 +17,7 @@ import Footer from '@/components/Layout/Footer.astro'
         <link
             rel="discord:component-embed"
             type="application/json"
-            href="/embed.json"
+            href={new URL('/embed.json', Astro.site)}
         />
     </head>
     <body>
