@@ -1,4 +1,6 @@
-const DEFAULT_USER_ID = '848339671629299742'
+import { discordUserId } from '@/consts'
+
+const DEFAULT_USER_ID = discordUserId
 const DEFAULT_FALLBACK_URL = '/assets/fallback.png'
 
 async function getFallbackImage(fallbackUrl: string, request: Request) {

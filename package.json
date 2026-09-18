@@ -3,6 +3,9 @@
     "type": "module",
     "version": "1.0.0",
     "author": "Alex Naibuu <me@naibuu.dev>",
+    "engines": {
+        "node": ">=22.12.0"
+    },
     "scripts": {
         "dev": "astro dev",
         "build": "astro build",
@@ -15,14 +18,14 @@
     "dependencies": {
         "@astrojs/node": "^10.1.0",
         "@lucide/astro": "^0.525.0",
-        "@tailwindcss/vite": "^4.1.11",
+        "@tailwindcss/vite": "^4.3.2",
         "astro": "^6.3.1",
-        "tailwindcss": "^4.2.1",
+        "tailwindcss": "^4.3.2",
         "typescript": "^5.9.3"
     },
     "devDependencies": {
-        "prettier": "^3.8.1",
+        "prettier": "^3.9.5",
         "prettier-plugin-astro": "^0.14.1",
-        "prettier-plugin-tailwindcss": "^0.7.2"
+        "prettier-plugin-tailwindcss": "^0.8.0"
     }
 }

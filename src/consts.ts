@@ -16,6 +16,8 @@ import LastFM from './assets/lastfm.svg'
 import Mobile from './assets/mobile.svg'
 import Web from './assets/web.svg'
 
+export const discordUserId = '848339671629299742'
+
 export const Information: Info[] = [
     {
         icon: MapPin,

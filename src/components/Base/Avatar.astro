@@ -1,4 +1,6 @@
 ---
+import { discordUserId } from '@/consts'
+
 interface Props {
     size: number
 }
@@ -48,8 +50,8 @@ const { size } = Astro.props
     </span>
 </div>
 
-<script define:vars={{ size }}>
-    const userId = '848339671629299742'
+<script define:vars={{ size, discordUserId }}>
+    const userId = discordUserId
 
     const statusColorMap = {
         online: '#23a55a',
