@@ -5,6 +5,7 @@ import node from '@astrojs/node'
 
 // https://astro.build/config
 export default defineConfig({
+    site: 'https://www.thororen.com',
     output: 'server',
     vite: {
         plugins: [tailwindcss()],
@@ -13,6 +14,6 @@ export default defineConfig({
         mode: 'standalone',
     }),
     server: {
-        port: 4000
-    }
+        port: 4000,
+    },
 })
