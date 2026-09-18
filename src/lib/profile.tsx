@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import {
     createContext,
@@ -6,9 +6,9 @@ import {
     useEffect,
     useState,
     type ReactNode,
-} from 'react'
-import { discordUserId } from '@/consts'
-import type { Badge, LanyardData } from '@/types'
+} from "react"
+import { discordUserId } from "@/consts"
+import type { Badge, LanyardData } from "@/types"
 
 interface Profile {
     lanyard: LanyardData | null
@@ -55,17 +55,17 @@ async function fetchDecorUrl(lanyard: LanyardData | null) {
             return `https://ugc.decor.fieryflames.dev/${data.decorationHash}.png?animated=true`
         }
     } catch (e) {
-        console.error('Decor API error:', e)
+        console.error("Decor API error:", e)
     }
     return null
 }
 
 function fetchBadges(): Promise<Badge[]> {
-    return getJson('/api/badges')
+    return getJson("/api/badges")
 }
 
 async function fetchTimezone() {
-    const fallback = 'America/New_York'
+    const fallback = "America/New_York"
     try {
         const data = await getJson(
             `https://timezone.creations.works/get?id=${discordUserId}`,
@@ -90,11 +90,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                 update({ lanyard })
                 update({ decorUrl: await fetchDecorUrl(lanyard) })
             })
-            .catch((e) => console.error('Error fetching user data:', e))
+            .catch((e) => console.error("Error fetching user data:", e))
 
         fetchBadges()
             .then((badges) => update({ badges }))
-            .catch((e) => console.error('Error fetching badges:', e))
+            .catch((e) => console.error("Error fetching badges:", e))
 
         fetchTimezone().then((timezone) => update({ timezone }))
 

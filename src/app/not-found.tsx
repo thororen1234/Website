@@ -1,9 +1,9 @@
-import { TriangleAlert } from 'lucide-react'
-import { createMetadata } from '@/lib/metadata'
+import { TriangleAlert } from "lucide-react"
+import { createMetadata } from "@/lib/metadata"
 
 export const metadata = createMetadata({
-    title: 'thororen',
-    description: 'Page not found.',
+    title: "thororen",
+    description: "Page not found.",
 })
 
 export default function NotFound() {

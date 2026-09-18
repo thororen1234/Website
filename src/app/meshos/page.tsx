@@ -1,44 +1,44 @@
-import { Fragment } from 'react'
-import { Link } from 'lucide-react'
-import Box from '@/components/Base/Box'
-import MeshosKeygen from '@/components/MeshosKeygen'
-import { createMetadata } from '@/lib/metadata'
+import { Fragment } from "react"
+import { Link } from "lucide-react"
+import Box from "@/components/Base/Box"
+import MeshosKeygen from "@/components/MeshosKeygen"
+import { createMetadata } from "@/lib/metadata"
 
 export const metadata = {
     ...createMetadata({
-        title: 'MeshOS Keygen',
-        description: 'MeshOS Keygen to generate device keys.',
-        path: '/meshos',
+        title: "MeshOS Keygen",
+        description: "MeshOS Keygen to generate device keys.",
+        path: "/meshos",
     }),
-    icons: { icon: { url: '/meshos/meshos.png', type: 'image/png' } },
+    icons: { icon: { url: "/meshos/meshos.png", type: "image/png" } },
 }
 
 const downloads = [
     {
-        label: 'MeshOS Apk',
+        label: "MeshOS Apk",
         links: [
-            { text: 'Direct', href: 'https://thororen.com/meshos/meshos.apk' },
+            { text: "Direct", href: "https://thororen.com/meshos/meshos.apk" },
             {
-                text: 'Mirror 1',
-                href: 'https://meshoskey.com/MeshOS-v1.0.0.apk',
+                text: "Mirror 1",
+                href: "https://meshoskey.com/MeshOS-v1.0.0.apk",
             },
             {
-                text: 'GitHub',
-                href: 'https://github.com/andymux/meshos-releases/releases/download/v1.0.0/app-release.apk',
+                text: "GitHub",
+                href: "https://github.com/andymux/meshos-releases/releases/download/v1.0.0/app-release.apk",
             },
         ],
     },
     {
-        label: 'MeshOS Bin',
+        label: "MeshOS Bin",
         links: [
-            { text: 'Direct', href: 'https://thororen.com/meshos/meshos.bin' },
+            { text: "Direct", href: "https://thororen.com/meshos/meshos.bin" },
             {
-                text: 'Mirror 1',
-                href: 'https://meshoskey.com/MeshOS-TDeck-1.1.8.bin',
+                text: "Mirror 1",
+                href: "https://meshoskey.com/MeshOS-TDeck-1.1.8.bin",
             },
             {
-                text: 'Mirror 2',
-                href: 'https://ndl1s62ywx.pages.dev/MeshOS-TDeck-1.1.8.bin',
+                text: "Mirror 2",
+                href: "https://ndl1s62ywx.pages.dev/MeshOS-TDeck-1.1.8.bin",
             },
         ],
     },
@@ -90,7 +90,7 @@ export default function Meshos() {
                             >
                                 <Link size={16} />
                                 <span>
-                                    More info about this keygen and MeshOS{' '}
+                                    More info about this keygen and MeshOS{" "}
                                 </span>
                             </a>
                         </div>

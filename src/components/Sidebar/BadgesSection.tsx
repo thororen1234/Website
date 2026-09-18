@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { BookUser } from 'lucide-react'
-import Box from '@/components/Base/Box'
-import { useProfile } from '@/lib/profile'
-import { platformPaths, type Platform } from './platformPaths'
+import { BookUser } from "lucide-react"
+import Box from "@/components/Base/Box"
+import { useProfile } from "@/lib/profile"
+import { platformPaths, type Platform } from "./platformPaths"
 
 function PlatformIcon({ platform }: { platform: Platform }) {
     return (
@@ -20,11 +20,11 @@ export default function BadgesSection() {
     const hasClan = Boolean(clan?.tag && clan?.identity_guild_id && clan?.badge)
 
     const platforms: Platform[] = []
-    if (lanyard?.active_on_discord_web) platforms.push('web')
-    if (lanyard?.active_on_discord_mobile) platforms.push('mobile')
-    if (lanyard?.active_on_discord_desktop) platforms.push('desktop')
-    if (lanyard?.active_on_discord_embedded) platforms.push('embedded')
-    if (lanyard?.active_on_discord_vr) platforms.push('vr')
+    if (lanyard?.active_on_discord_web) platforms.push("web")
+    if (lanyard?.active_on_discord_mobile) platforms.push("mobile")
+    if (lanyard?.active_on_discord_desktop) platforms.push("desktop")
+    if (lanyard?.active_on_discord_embedded) platforms.push("embedded")
+    if (lanyard?.active_on_discord_vr) platforms.push("vr")
 
     return (
         <>

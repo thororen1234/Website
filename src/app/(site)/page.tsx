@@ -1,18 +1,18 @@
-import { Highlighter, Notebook, Star } from 'lucide-react'
-import { projects, skills } from '@/consts'
-import { createMetadata } from '@/lib/metadata'
-import Box from '@/components/Base/Box'
-import Tag from '@/components/Base/Tag'
-import ProjectCard from '@/components/Cards/ProjectCard'
-import SkillCard from '@/components/Cards/SkillCard'
+import { Highlighter, Notebook, Star } from "lucide-react"
+import { projects, skills } from "@/consts"
+import { createMetadata } from "@/lib/metadata"
+import Box from "@/components/Base/Box"
+import Tag from "@/components/Base/Tag"
+import ProjectCard from "@/components/Cards/ProjectCard"
+import SkillCard from "@/components/Cards/SkillCard"
 
 export const revalidate = 3600
 
 export const metadata = createMetadata({
-    title: 'thororen',
+    title: "thororen",
     description:
         "I'm a software developer from the United States of America with experience in languages such as TypeScript, JavaScript, Python, and Go.",
-    path: '/',
+    path: "/",
 })
 
 export default function Home() {

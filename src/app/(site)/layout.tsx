@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react'
-import Footer from '@/components/Layout/Footer'
-import Sidebar from '@/components/Layout/Sidebar'
-import { siteUrl } from '@/consts'
+import type { ReactNode } from "react"
+import Footer from "@/components/Layout/Footer"
+import Sidebar from "@/components/Layout/Sidebar"
+import { siteUrl } from "@/consts"
 
 // The footer shows the current year, so refresh the prerendered page hourly
 export const revalidate = 3600

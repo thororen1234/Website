@@ -1,9 +1,9 @@
-import type { ComponentType } from 'react'
-import type { LucideProps } from 'lucide-react'
+import type { ComponentType } from "react"
+import type { LucideProps } from "lucide-react"
 
 export type Icon = ComponentType<LucideProps>
 
-export type Theme = 'light' | 'dark'
+export type Theme = "light" | "dark"
 
 export interface Info {
     icon: Icon

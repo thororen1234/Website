@@ -1,7 +1,7 @@
-import { Users } from 'lucide-react'
-import { friends } from '@/consts'
-import FriendCard from '@/components/Cards/FriendCard'
-import Box from '@/components/Base/Box'
+import { Users } from "lucide-react"
+import { friends } from "@/consts"
+import FriendCard from "@/components/Cards/FriendCard"
+import Box from "@/components/Base/Box"
 
 export default function FriendsSection() {
     return (
@@ -16,8 +16,8 @@ export default function FriendsSection() {
                         key={friend.id}
                         className={
                             friends.length % 2 !== 0 && i === friends.length - 1
-                                ? 'col-span-2 flex justify-center'
-                                : ''
+                                ? "col-span-2 flex justify-center"
+                                : ""
                         }
                     >
                         <FriendCard {...friend} />

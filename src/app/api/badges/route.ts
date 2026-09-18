@@ -1,5 +1,5 @@
-import { discordUserId } from '@/consts'
-import type { Badge } from '@/types'
+import { discordUserId } from "@/consts"
+import type { Badge } from "@/types"
 
 const ONE_DAY = 1000 * 60 * 60 * 24
 const RETRY_AFTER = 1000 * 60 * 5
@@ -10,7 +10,7 @@ let retryAt = 0
 async function fetchBadges(): Promise<Badge[]> {
     const res = await fetch(
         `https://gb.equicord.org/${discordUserId}?seperated=true&capitalize=true`,
-        { cache: 'no-store', signal: AbortSignal.timeout(5000) },
+        { cache: "no-store", signal: AbortSignal.timeout(5000) },
     )
     if (!res.ok) throw new Error(`Badge API responded ${res.status}`)
 
@@ -43,12 +43,12 @@ export async function GET() {
         retryAt = 0
         return Response.json(badges)
     } catch (e) {
-        console.error('Error fetching badges:', e)
+        console.error("Error fetching badges:", e)
         retryAt = now + RETRY_AFTER
 
         if (cached) return Response.json(cached.badges)
         return Response.json(
-            { error: 'Failed to fetch badges' },
+            { error: "Failed to fetch badges" },
             { status: 502 },
         )
     }

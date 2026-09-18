@@ -1,18 +1,18 @@
-import type { Theme } from '@/types'
+import type { Theme } from "@/types"
 
 export function getTheme(): Theme {
-    const stored = localStorage.getItem('theme') as Theme | null
+    const stored = localStorage.getItem("theme") as Theme | null
 
-    if (stored === 'light' || stored === 'dark') {
+    if (stored === "light" || stored === "dark") {
         return stored
     }
 
     const systemPrefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)',
+        "(prefers-color-scheme: dark)",
     ).matches
-    const defaultTheme: Theme = systemPrefersDark ? 'dark' : 'light'
+    const defaultTheme: Theme = systemPrefersDark ? "dark" : "light"
 
-    localStorage.setItem('theme', defaultTheme)
+    localStorage.setItem("theme", defaultTheme)
     return defaultTheme
 }
 
@@ -21,10 +21,10 @@ export function setTheme(theme: Theme): Theme {
 
     if (theme === currentTheme) return theme
 
-    localStorage.setItem('theme', theme)
-    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem("theme", theme)
+    document.documentElement.setAttribute("data-theme", theme)
 
-    console.debug('[Theme] Switched to:', theme)
+    console.debug("[Theme] Switched to:", theme)
 
     return theme
 }

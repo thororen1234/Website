@@ -1,4 +1,4 @@
-import { projects, siteUrl, socials } from '@/consts'
+import { projects, siteUrl, socials } from "@/consts"
 
 const ACCENT_COLOR = 0x970000
 
@@ -15,13 +15,13 @@ export function GET() {
                     {
                         type: 10,
                         content:
-                            '# thororen\nSoftware developer from the United States with experience in TypeScript, JavaScript, Python, and Go.',
+                            "# thororen\nSoftware developer from the United States with experience in TypeScript, JavaScript, Python, and Go.",
                     },
                 ],
                 accessory: {
                     type: 11,
                     media: { url: `${siteUrl}/assets/profile` },
-                    description: 'My avatar',
+                    description: "My avatar",
                 },
             },
             { type: 14 },
@@ -29,13 +29,13 @@ export function GET() {
                 type: 10,
                 content: `**Currently building**\n${currentProjects
                     .map((p) => `[${p.title}](${p.url})`)
-                    .join(' • ')}`,
+                    .join(" • ")}`,
             },
             { type: 14, spacing: 1 },
             {
                 type: 1,
                 components: socials
-                    .filter((s) => s.text !== 'Donate')
+                    .filter((s) => s.text !== "Donate")
                     .map((s) => ({
                         type: 2,
                         style: 5,

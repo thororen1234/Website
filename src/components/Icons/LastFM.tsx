@@ -1,8 +1,8 @@
-import type { LucideProps } from 'lucide-react'
+import type { LucideProps } from "lucide-react"
 
 export default function LastFM({
     size = 24,
-    color = 'currentColor',
+    color = "currentColor",
     strokeWidth = 2,
     ...rest
 }: LucideProps) {

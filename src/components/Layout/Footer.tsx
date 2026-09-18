@@ -6,7 +6,7 @@ export default function Footer() {
             </span>
 
             <p className="text-neutral-600 dark:text-neutral-400">
-                Skidded with 💗 from{' '}
+                Skidded with 💗 from{" "}
                 <a
                     href="https://naibuu.dev/"
                     target="_blank"

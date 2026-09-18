@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useProfile } from '@/lib/profile'
+import { useProfile } from "@/lib/profile"
 
 const statusColors: Record<string, string> = {
-    online: '#23a55a',
-    idle: '#f0b232',
-    dnd: '#f23f43',
-    offline: '#949ba4',
+    online: "#23a55a",
+    idle: "#f0b232",
+    dnd: "#f23f43",
+    offline: "#949ba4",
 }
 
 export default function Avatar({ size }: { size: number }) {
@@ -14,21 +14,21 @@ export default function Avatar({ size }: { size: number }) {
 
     const user = lanyard?.discord_user
     const hasAvatar = Boolean(user?.id && user?.avatar)
-    const status = lanyard?.discord_status || 'offline'
+    const status = lanyard?.discord_status || "offline"
 
     return (
         <div
             style={{
-                position: 'relative',
-                display: 'inline-block',
+                position: "relative",
+                display: "inline-block",
                 width: size,
                 height: size,
             }}
         >
             <img
-                src={hasAvatar ? '/assets/profile' : undefined}
+                src={hasAvatar ? "/assets/profile" : undefined}
                 className="rounded-full border border-zinc-800 bg-zinc-900 shadow select-none"
-                style={{ borderRadius: '50%' }}
+                style={{ borderRadius: "50%" }}
                 width={size}
                 height={size}
                 draggable={false}
@@ -43,14 +43,14 @@ export default function Avatar({ size }: { size: number }) {
                     width={size}
                     height={size}
                     style={{
-                        position: 'absolute',
+                        position: "absolute",
                         inset: 0,
                         zIndex: 15,
-                        pointerEvents: 'none',
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        transform: 'scale(1.20)',
+                        pointerEvents: "none",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transform: "scale(1.20)",
                     }}
                 />
             )}
@@ -58,13 +58,13 @@ export default function Avatar({ size }: { size: number }) {
             <span
                 style={{
                     zIndex: 30,
-                    position: 'absolute',
+                    position: "absolute",
                     bottom: 4,
                     right: 4,
                     width: size / 4,
                     height: size / 4,
-                    borderRadius: '50%',
-                    border: '4px solid #1a1a1a',
+                    borderRadius: "50%",
+                    border: "4px solid #1a1a1a",
                     backgroundColor:
                         statusColors[status] ?? statusColors.offline,
                 }}

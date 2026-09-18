@@ -1,6 +1,6 @@
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-const image = '/assets/fallback.png'
+const image = "/assets/fallback.png"
 
 interface Options {
     title: string
@@ -18,14 +18,14 @@ export function createMetadata({
         description,
         other: { title },
         openGraph: {
-            type: 'website',
+            type: "website",
             url: path,
             title,
             description,
             images: image,
         },
         twitter: {
-            card: 'summary_large_image',
+            card: "summary_large_image",
             title,
             description,
             images: image,

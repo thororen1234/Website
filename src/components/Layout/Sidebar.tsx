@@ -1,9 +1,9 @@
-import Avatar from '@/components/Base/Avatar'
-import AboutSection from '@/components/Sidebar/AboutSection'
-import BadgesSection from '@/components/Sidebar/BadgesSection'
-import FriendsSection from '@/components/Sidebar/FriendsSection'
-import SocialsSection from '@/components/Sidebar/SocialsSection'
-import { ProfileProvider } from '@/lib/profile'
+import Avatar from "@/components/Base/Avatar"
+import AboutSection from "@/components/Sidebar/AboutSection"
+import BadgesSection from "@/components/Sidebar/BadgesSection"
+import FriendsSection from "@/components/Sidebar/FriendsSection"
+import SocialsSection from "@/components/Sidebar/SocialsSection"
+import { ProfileProvider } from "@/lib/profile"
 
 export default function Sidebar() {
     return (

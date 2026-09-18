@@ -1,21 +1,21 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
-import { UserCircle } from 'lucide-react'
-import { information, MiscIcons } from '@/consts'
-import Box from '@/components/Base/Box'
-import { useProfile } from '@/lib/profile'
+import { useEffect, useState } from "react"
+import { UserCircle } from "lucide-react"
+import { information, MiscIcons } from "@/consts"
+import Box from "@/components/Base/Box"
+import { useProfile } from "@/lib/profile"
 
 function useClock(timezone: string | null) {
-    const [time, setTime] = useState('--:--')
+    const [time, setTime] = useState("--:--")
 
     useEffect(() => {
         if (!timezone) return
 
-        const formatter = new Intl.DateTimeFormat('en-US', {
+        const formatter = new Intl.DateTimeFormat("en-US", {
             timeZone: timezone,
-            hour: '2-digit',
-            minute: '2-digit',
+            hour: "2-digit",
+            minute: "2-digit",
             hour12: true,
         })
         const update = () => setTime(formatter.format(new Date()))
@@ -72,7 +72,7 @@ export default function AboutSection() {
                         />
                         <span className="flex min-w-0 flex-col">
                             <span className="truncate">
-                                {activity.details || activity.name || ''}
+                                {activity.details || activity.name || ""}
                             </span>
                             {activity.state && (
                                 <span className="truncate text-xs font-normal text-neutral-500 dark:text-neutral-400">

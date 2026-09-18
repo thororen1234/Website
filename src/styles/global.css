@@ -1,10 +1,10 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @theme {
     /* Fonts */
-    --font-sans: 'Inter', sans-serif;
+    --font-sans: "Inter", sans-serif;
 }
 
 body {

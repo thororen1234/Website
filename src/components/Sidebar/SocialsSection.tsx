@@ -1,7 +1,7 @@
-import { BookBookmark, Heart } from 'lucide-react'
-import Github from '@/components/Icons/Github'
-import { socials } from '@/consts'
-import Box from '@/components/Base/Box'
+import { BookBookmark, Heart } from "lucide-react"
+import Github from "@/components/Icons/Github"
+import { socials } from "@/consts"
+import Box from "@/components/Base/Box"
 
 export default function SocialsSection() {
     return (

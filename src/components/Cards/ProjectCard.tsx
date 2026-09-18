@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { Calendar, ChevronDown, ChevronUp } from 'lucide-react'
-import Github from '@/components/Icons/Github'
-import type { Project } from '@/types'
+import { useState } from "react"
+import { Calendar, ChevronDown, ChevronUp } from "lucide-react"
+import Github from "@/components/Icons/Github"
+import type { Project } from "@/types"
 
 export default function ProjectCard({
     start,
@@ -40,7 +40,7 @@ export default function ProjectCard({
                             draggable={false}
                             className="rounded select-none"
                             onError={(e) => {
-                                e.currentTarget.style.display = 'none'
+                                e.currentTarget.style.display = "none"
                             }}
                         />
                     )}
@@ -75,7 +75,7 @@ export default function ProjectCard({
                             onClick={() => setOpen((prev) => !prev)}
                             className="inline-flex w-fit cursor-pointer items-center gap-1 rounded-full bg-zinc-200 px-3 py-1 text-xs font-medium text-neutral-800 hover:bg-zinc-300/80 dark:bg-zinc-800 dark:text-neutral-300 dark:hover:bg-zinc-700/50"
                         >
-                            {open ? 'Hide tasks' : 'View tasks'}
+                            {open ? "Hide tasks" : "View tasks"}
                             {open ? (
                                 <ChevronUp size={12} />
                             ) : (
