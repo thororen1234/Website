@@ -1,0 +1,43 @@
+import { BookBookmark, Heart } from 'lucide-react'
+import Github from '@/components/Icons/Github'
+import { socials } from '@/consts'
+import Box from '@/components/Base/Box'
+
+export default function SocialsSection() {
+    return (
+        <>
+            <span className="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                <BookBookmark size={18} /> Socials
+            </span>
+
+            <a
+                href="https://github.com/sponsors/thororen1234"
+                target="_blank"
+                className="group relative flex flex-1 items-center gap-2 overflow-hidden rounded-2xl border border-rose-800 bg-linear-to-t from-rose-800 to-rose-600 px-8 py-4 text-sm font-medium transition-all hover:brightness-110 active:scale-95"
+            >
+                <Github size={20} />
+                <span className="transition-colors group-hover:text-rose-300">
+                    Github Sponsors
+                </span>
+                <Heart
+                    size={128}
+                    className="absolute -top-6 -right-6 mask-b-from-10% opacity-20 transition-transform duration-700 group-hover:-translate-x-2"
+                />
+            </a>
+
+            <Box>
+                {socials.map((social) => (
+                    <a
+                        key={social.text}
+                        href={social.url}
+                        target="_blank"
+                        className="flex items-center gap-1 font-medium text-neutral-700 transition-colors hover:text-rose-500 dark:text-neutral-200"
+                    >
+                        <social.icon size={18} />
+                        {social.text}
+                    </a>
+                ))}
+            </Box>
+        </>
+    )
+}

@@ -7,25 +7,26 @@
         "node": ">=22.12.0"
     },
     "scripts": {
-        "dev": "astro dev",
-        "build": "astro build",
-        "astro": "astro",
-        "preview": "astro preview",
+        "dev": "next dev -p 4000",
+        "build": "next build",
+        "start": "next start",
         "lint": "prettier --check .",
-        "format": "prettier --write .",
-        "start": "node dist/server/entry.mjs"
+        "format": "prettier --write ."
     },
     "dependencies": {
-        "@astrojs/node": "^11.1.6",
-        "@lucide/astro": "^1.46.0",
-        "@tailwindcss/vite": "^4.3.3",
-        "astro": "^7.3.3",
+        "lucide-react": "^1.47.0",
+        "next": "^16.3.5",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0",
         "tailwindcss": "^4.3.3",
         "typescript": "^7.0.2"
     },
     "devDependencies": {
+        "@tailwindcss/postcss": "^4.3.3",
+        "@types/node": "^26.6.1",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
         "prettier": "^3.9.7",
-        "prettier-plugin-astro": "^1.0.0",
         "prettier-plugin-tailwindcss": "^0.8.1"
     }
 }

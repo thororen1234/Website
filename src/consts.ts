@@ -6,16 +6,12 @@ import {
     ListMusic,
     MapPin,
     User,
-} from '@lucide/astro'
-import Github from './components/Icons/Github.astro'
-import Twitter from './components/Icons/Twitter.astro'
+} from 'lucide-react'
+import Github from './components/Icons/Github'
+import Twitter from './components/Icons/Twitter'
+import LastFM from './components/Icons/LastFM'
 
-import Desktop from './assets/desktop.svg'
-import Embedded from './assets/embedded.svg'
-import LastFM from './assets/lastfm.svg'
-import Mobile from './assets/mobile.svg'
-import Web from './assets/web.svg'
-
+export const siteUrl = 'https://www.thororen.com'
 export const discordUserId = '848339671629299742'
 export const pfpFallback = '/assets/fallback.png'
 
@@ -35,13 +31,6 @@ export const MiscIcons = {
     AlarmClock: AlarmClock,
     BookOpen: BookOpen,
     ListMusic: ListMusic,
-}
-
-export const platforms = {
-    Web: Web,
-    Mobile: Mobile,
-    Desktop: Desktop,
-    Embedded: Embedded,
 }
 
 export const socials: Social[] = [
@@ -225,5 +214,10 @@ const friendsList = [
 
 export const friends = friendsList.map(({ fallback, ...f }) => ({
     ...f,
-    img: `/assets/profile?userId=${f.id}&fallbackUrl=${encodeURIComponent(fallback)}`,
+    img: `/assets/profile?userId=${f.id}`,
 }))
+
+export const avatarFallbacks = new Map<string, string>([
+    [discordUserId, pfpFallback],
+    ...friendsList.map((f) => [f.id, f.fallback] as [string, string]),
+])

@@ -15,10 +15,18 @@ FROM node:lts-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV HOST=0.0.0.0
+ENV HOSTNAME=0.0.0.0
 ENV PORT=8080
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-COPY --from=build /app/dist ./dist
+COPY package.json pnpm-*.yaml ./
+RUN pnpm install --prod --frozen-lockfile
+
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
 
 EXPOSE 8080
-CMD ["node", "dist/server/entry.mjs"]
+CMD ["node", "server.js"]
