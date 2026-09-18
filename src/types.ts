@@ -23,6 +23,8 @@ export interface Project {
     title: string
     description: string
     url: string
+    icon?: string
+    tasks?: string[]
 }
 
 export interface Product {

@@ -1,10 +1,11 @@
 ---
 import type { Project } from '@/types'
-import { Calendar } from '@lucide/astro'
+import { Calendar, ChevronDown, ChevronUp } from '@lucide/astro'
 
 interface Props extends Project {}
 
-const { start, end, title, description, url } = Astro.props
+const { start, end, title, description, url, icon, tasks } = Astro.props
+const hasTasks = Boolean(tasks?.length)
 ---
 
 <a
@@ -12,11 +13,22 @@ const { start, end, title, description, url } = Astro.props
     target="_blank"
     class="flex-1 transition-transform active:scale-[.98]"
 >
-    <div class="flex h-40 min-w-96 flex-col gap-1 rounded-2xl border border-zinc-300 bg-zinc-100 px-8 py-6 text-neutral-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300">
+    <div class="flex min-h-40 min-w-96 flex-col gap-1 rounded-2xl border border-zinc-300 bg-zinc-100 px-8 py-6 text-neutral-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300">
         <h4 class="flex items-center gap-2 font-medium text-neutral-800 dark:text-neutral-200">
+            {icon && (
+                <img
+                    src={icon}
+                    alt=""
+                    width={28}
+                    height={28}
+                    draggable={false}
+                    class="rounded select-none"
+                    onerror="this.style.display='none'"
+                />
+            )}
             {title}
 
-            <span class="flex items-center gap-1 text-sm">
+            <span class="ml-auto flex items-center gap-1 text-sm">
                 <Calendar size={16} fill="#ffffff10" />
                 {end ? `${start} - ${end}` : `Since ${start}`}
             </span>
@@ -25,5 +37,41 @@ const { start, end, title, description, url } = Astro.props
         <p class="text-xs leading-5 text-neutral-500 dark:text-neutral-400">
             {description}
         </p>
+
+        {hasTasks && (
+            <div class="flex flex-col gap-2">
+                <button
+                    type="button"
+                    class="tasks-toggle inline-flex w-fit cursor-pointer items-center gap-1 rounded-full bg-zinc-200 px-3 py-1 text-xs font-medium text-neutral-800 hover:bg-zinc-300/80 dark:bg-zinc-800 dark:text-neutral-300 dark:hover:bg-zinc-700/50"
+                >
+                    <span class="tasks-show-label">View tasks</span>
+                    <span class="tasks-hide-label hidden">Hide tasks</span>
+                    <ChevronDown size={12} class="tasks-show-icon" />
+                    <ChevronUp size={12} class="tasks-hide-icon hidden" />
+                </button>
+
+                <ul class="tasks-list hidden list-disc space-y-1 pl-5 text-sm text-neutral-600 dark:text-neutral-400">
+                    {tasks!.map((task) => (
+                        <li>{task}</li>
+                    ))}
+                </ul>
+            </div>
+        )}
     </div>
 </a>
+
+<script>
+    document
+        .querySelectorAll<HTMLButtonElement>('.tasks-toggle')
+        .forEach((button) => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault()
+                event.stopPropagation()
+
+                const card = button.closest('a')
+                card?.querySelectorAll(
+                    '.tasks-list, .tasks-show-label, .tasks-hide-label, .tasks-show-icon, .tasks-hide-icon',
+                ).forEach((el) => el.classList.toggle('hidden'))
+            })
+        })
+</script>

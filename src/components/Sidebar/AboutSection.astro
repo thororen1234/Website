@@ -31,9 +31,15 @@ import Box from '@/components/Base/Box.astro'
 
     <span
         id="activity-container"
-        class="hidden items-center gap-1 font-medium text-neutral-700 dark:text-neutral-200"
+        class="hidden items-start gap-1 font-medium text-neutral-700 dark:text-neutral-200"
     >
-        <MiscIcons.ListMusic size="18" class="shrink-0" />
-        <span id="activity-text" class="truncate"></span>
+        <MiscIcons.ListMusic size="18" class="mt-0.5 shrink-0" />
+        <span class="flex min-w-0 flex-col">
+            <span id="activity-text" class="truncate"></span>
+            <span
+                id="activity-artist-text"
+                class="hidden truncate text-xs font-normal text-neutral-500 dark:text-neutral-400"
+            ></span>
+        </span>
     </span>
 </Box>

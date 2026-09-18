@@ -79,9 +79,23 @@ async function fetchUserData() {
             const activityContainer =
                 document.getElementById('activity-container')
             const activityText = document.getElementById('activity-text')
+            const activityArtistText = document.getElementById(
+                'activity-artist-text',
+            )
             if (activityContainer && activityText) {
                 activityText.textContent =
                     activity?.details || activity?.name || ''
+
+                if (activityArtistText) {
+                    if (activity?.state) {
+                        activityArtistText.textContent = `by ${activity.state}`
+                        activityArtistText.classList.remove('hidden')
+                    } else {
+                        activityArtistText.textContent = ''
+                        activityArtistText.classList.add('hidden')
+                    }
+                }
+
                 activityContainer.classList.remove('hidden')
                 activityContainer.classList.add('flex')
             }

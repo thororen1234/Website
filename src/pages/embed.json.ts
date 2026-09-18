@@ -5,7 +5,7 @@ const ACCENT_COLOR = 0x970000
 
 export const GET: APIRoute = ({ site, url }) => {
     const origin = site?.origin ?? url.origin
-    const currentProjects = projects.filter((p) => !p.end).slice(0, 3)
+    const currentProjects = projects.filter((p) => !p.end).slice(0, 2)
 
     const component = {
         type: 17,
@@ -29,10 +29,9 @@ export const GET: APIRoute = ({ site, url }) => {
             { type: 14 },
             {
                 type: 10,
-                content: `**Currently building**\n
-                    ${currentProjects
-                        .map((p) => `[${p.title}](${p.url})`)
-                        .join(' • ')}`,
+                content: `**Currently building**\n${currentProjects
+                    .map((p) => `[${p.title}](${p.url})`)
+                    .join(' • ')}`,
             },
             { type: 14, spacing: 1 },
             {

@@ -89,16 +89,22 @@ export const projects: Project[] = [
     {
         start: 2023,
         title: 'Equicord',
-        description:
-            'The other cutest Discord mod, currently maintaining and working on the entire project.',
+        description: 'The other cutest Discord mod. A fork of Vencord which just adds more plugins and features.',
         url: 'https://equicord.org',
+        icon: '/assets/icons/equicord.png',
+        tasks: [
+            'Maintaining the project',
+            'Working across the entire codebase',
+        ],
     },
     {
         start: 2023,
         title: 'CheatBreaker',
         description:
-            'CheatBreaker is a free FPS-boosting modpack for Minecraft. I collaborated with the team on developing a new launcher.',
+            'CheatBreaker is a free FPS-boosting modpack for Minecraft.',
         url: 'https://cheatbreaker.net',
+        icon: '/assets/icons/cheatbreaker.png',
+        tasks: ['Collaborated with the team on developing a new launcher'],
     },
     {
         start: 2025,
@@ -106,6 +112,7 @@ export const projects: Project[] = [
         description:
             'Disbored (aka surg) is just a giant repository org handling Discord bots, prs to places, websites and more.',
         url: 'https://surg.fyi/',
+        icon: '/assets/icons/disbored.png',
     },
     {
         start: 2024,
@@ -114,6 +121,7 @@ export const projects: Project[] = [
         description:
             'Surge was a continuation of Hybris after it was abandoned and was greatly expanded upon but ultimately abandoned as well.',
         url: 'https://github.com/SurgeLauncher',
+        icon: '/assets/icons/surge.png',
     },
     {
         start: 2023,
@@ -122,6 +130,7 @@ export const projects: Project[] = [
         description:
             'Hybris was a Minecraft client that was built around the success of Solar Tweaks after it permanently shut down but was abandoned.',
         url: 'https://github.com/hybrismc',
+        icon: '/assets/icons/hybris.png',
     },
     {
         start: 2022,
@@ -130,6 +139,7 @@ export const projects: Project[] = [
         description:
             'Solar Tweaks is a custom Lunar Client launcher that provides different modifications for the client.',
         url: 'https://github.com/hybrismc',
+        icon: '/assets/icons/solartweaks.png',
     },
     {
         start: 2022,
@@ -138,6 +148,7 @@ export const projects: Project[] = [
         description:
             'Neoblade was a continuation of Beycord after multiple attempts from others such as Beycord+ or Beycord (2021) but was considered a failed project and abandoned.',
         url: 'https://github.com/disbored/beycord',
+        icon: '/assets/icons/neoblade.png',
     },
     {
         start: 2020,
@@ -146,6 +157,7 @@ export const projects: Project[] = [
         description:
             'Beycord is an open source Discord bot dedicated to bringing the fun and memes of Beyblade into Discord.',
         url: 'https://thororen.com/beycord',
+        icon: '/assets/icons/beycord.png',
     },
 ]
 
