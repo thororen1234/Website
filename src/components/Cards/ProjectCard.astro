@@ -1,19 +1,25 @@
 ---
 import type { Project } from '@/types'
 import { Calendar, ChevronDown, ChevronUp } from '@lucide/astro'
+import Github from '@/components/Icons/Github.astro'
 
 interface Props extends Project {}
 
-const { start, end, title, description, url, icon, tasks } = Astro.props
+const { start, end, title, description, url, github, icon, tasks } = Astro.props
 const hasTasks = Boolean(tasks?.length)
 ---
 
-<a
-    href={url}
-    target="_blank"
-    class="flex-1 transition-transform active:scale-[.98]"
->
-    <div class="flex min-h-40 min-w-96 flex-col gap-1 rounded-2xl border border-zinc-300 bg-zinc-100 px-8 py-6 text-neutral-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300">
+<div class="relative flex-1">
+    {url && (
+        <a
+            href={url}
+            target="_blank"
+            aria-label={title}
+            class="absolute inset-0 z-0 rounded-2xl transition-transform active:scale-[.98]"
+        />
+    )}
+
+    <div class="project-card flex h-48 min-w-96 flex-col gap-1 rounded-2xl border border-zinc-300 bg-zinc-100 px-8 py-6 text-neutral-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300">
         <h4 class="flex items-center gap-2 font-medium text-neutral-800 dark:text-neutral-200">
             {icon && (
                 <img
@@ -28,9 +34,21 @@ const hasTasks = Boolean(tasks?.length)
             )}
             {title}
 
-            <span class="ml-auto flex items-center gap-1 text-sm">
-                <Calendar size={16} fill="#ffffff10" />
-                {end ? `${start} - ${end}` : `Since ${start}`}
+            <span class="relative z-10 ml-auto flex items-center gap-3 text-sm">
+                {github && (
+                    <a
+                        href={github}
+                        target="_blank"
+                        aria-label="View source on GitHub"
+                        class="text-neutral-500 transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+                    >
+                        <Github size={16} />
+                    </a>
+                )}
+                <span class="flex items-center gap-1">
+                    <Calendar size={16} fill="#ffffff10" />
+                    {end ? `${start} - ${end}` : `Since ${start}`}
+                </span>
             </span>
         </h4>
 
@@ -39,7 +57,7 @@ const hasTasks = Boolean(tasks?.length)
         </p>
 
         {hasTasks && (
-            <div class="flex flex-col gap-2">
+            <div class="relative z-10 w-fit">
                 <button
                     type="button"
                     class="tasks-toggle inline-flex w-fit cursor-pointer items-center gap-1 rounded-full bg-zinc-200 px-3 py-1 text-xs font-medium text-neutral-800 hover:bg-zinc-300/80 dark:bg-zinc-800 dark:text-neutral-300 dark:hover:bg-zinc-700/50"
@@ -50,7 +68,7 @@ const hasTasks = Boolean(tasks?.length)
                     <ChevronUp size={12} class="tasks-hide-icon hidden" />
                 </button>
 
-                <ul class="tasks-list hidden list-disc space-y-1 pl-5 text-sm text-neutral-600 dark:text-neutral-400">
+                <ul class="tasks-list absolute top-full left-0 z-20 mt-2 hidden max-h-48 w-64 list-disc space-y-1 overflow-y-auto rounded-xl border border-zinc-300 bg-zinc-50 p-3 pl-8 text-sm text-neutral-600 shadow-lg dark:border-zinc-700 dark:bg-zinc-800 dark:text-neutral-400">
                     {tasks!.map((task) => (
                         <li>{task}</li>
                     ))}
@@ -58,7 +76,7 @@ const hasTasks = Boolean(tasks?.length)
             </div>
         )}
     </div>
-</a>
+</div>
 
 <script>
     document
@@ -68,7 +86,7 @@ const hasTasks = Boolean(tasks?.length)
                 event.preventDefault()
                 event.stopPropagation()
 
-                const card = button.closest('a')
+                const card = button.closest('.project-card')
                 card?.querySelectorAll(
                     '.tasks-list, .tasks-show-label, .tasks-hide-label, .tasks-show-icon, .tasks-hide-icon',
                 ).forEach((el) => el.classList.toggle('hidden'))

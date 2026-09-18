@@ -89,8 +89,10 @@ export const projects: Project[] = [
     {
         start: 2023,
         title: 'Equicord',
-        description: 'The other cutest Discord mod. A fork of Vencord which just adds more plugins and features.',
+        description:
+            'The other cutest Discord mod. A fork of Vencord which just adds more plugins and features.',
         url: 'https://equicord.org',
+        github: 'https://github.com/Equicord',
         icon: '/assets/icons/equicord.png',
         tasks: [
             'Maintaining the project',
@@ -103,8 +105,12 @@ export const projects: Project[] = [
         description:
             'CheatBreaker is a free FPS-boosting modpack for Minecraft.',
         url: 'https://cheatbreaker.net',
+        github: 'https://github.com/CheatBreakerNet',
         icon: '/assets/icons/cheatbreaker.png',
-        tasks: ['Collaborated with the team on developing a new launcher'],
+        tasks: [
+            'Helped with the development, flushing out, and features of the new website',
+            'Helped with the development and features of the new launcher',
+        ],
     },
     {
         start: 2025,
@@ -112,7 +118,12 @@ export const projects: Project[] = [
         description:
             'Disbored (aka surg) is just a giant repository org handling Discord bots, prs to places, websites and more.',
         url: 'https://surg.fyi/',
+        github: 'https://github.com/disbored',
         icon: '/assets/icons/disbored.png',
+        tasks: [
+            'Contributing Discord bots, tools, and websites across the org',
+            'Sending PRs to other projects under the org',
+        ],
     },
     {
         start: 2024,
@@ -120,8 +131,14 @@ export const projects: Project[] = [
         title: 'Surge',
         description:
             'Surge was a continuation of Hybris after it was abandoned and was greatly expanded upon but ultimately abandoned as well.',
-        url: 'https://github.com/SurgeLauncher',
+        github: 'https://github.com/SurgeLauncher',
         icon: '/assets/icons/surge.png',
+        tasks: [
+            'Moderated the community',
+            'Suggested ideas and features',
+            'Helped with bug testing',
+            'Contributed to client development',
+        ],
     },
     {
         start: 2023,
@@ -129,8 +146,14 @@ export const projects: Project[] = [
         title: 'Hybris',
         description:
             'Hybris was a Minecraft client that was built around the success of Solar Tweaks after it permanently shut down but was abandoned.',
-        url: 'https://github.com/hybrismc',
+        url: 'https://hybrismc.dev',
+        github: 'https://github.com/hybrismc',
         icon: '/assets/icons/hybris.png',
+        tasks: [
+            'Moderated the community',
+            'Suggested ideas and features',
+            'Helped with bug testing',
+        ],
     },
     {
         start: 2022,
@@ -138,8 +161,13 @@ export const projects: Project[] = [
         title: 'Solar Tweaks',
         description:
             'Solar Tweaks is a custom Lunar Client launcher that provides different modifications for the client.',
-        url: 'https://github.com/hybrismc',
+        github: 'https://github.com/hybrismc',
         icon: '/assets/icons/solartweaks.png',
+        tasks: [
+            'Moderated the community',
+            'Suggested ideas and features',
+            'Helped with bug testing',
+        ],
     },
     {
         start: 2022,
@@ -147,8 +175,12 @@ export const projects: Project[] = [
         title: 'Neoblade',
         description:
             'Neoblade was a continuation of Beycord after multiple attempts from others such as Beycord+ or Beycord (2021) but was considered a failed project and abandoned.',
-        url: 'https://github.com/disbored/beycord',
+        github: 'https://github.com/thororen1234/Beycord/tree/neoblade',
         icon: '/assets/icons/neoblade.png',
+        tasks: [
+            'Built on the open source Beycord and Beycord+ codebases',
+            'Designed new commands and features',
+        ],
     },
     {
         start: 2020,
@@ -157,7 +189,13 @@ export const projects: Project[] = [
         description:
             'Beycord is an open source Discord bot dedicated to bringing the fun and memes of Beyblade into Discord.',
         url: 'https://thororen.com/beycord',
+        github: 'https://github.com/thororen1234/Beycord',
         icon: '/assets/icons/beycord.png',
+        tasks: [
+            'Suggested ideas and features for the bot',
+            'Helped with bug testing',
+            'Moderated the community',
+        ],
     },
 ]
 

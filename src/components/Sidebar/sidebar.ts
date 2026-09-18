@@ -112,7 +112,7 @@ async function fetchBadges() {
         const badges: any[] = []
 
         const badgeRes = await fetch(
-            `https://badges.equicord.org/${userId}?seperated=true&capitalize=true`,
+            `https://gb.equicord.org/${userId}?seperated=true&capitalize=true`,
         )
         if (badgeRes.ok) {
             const badgeData = await badgeRes.json()
@@ -178,7 +178,7 @@ function initTimezoneClock(timezone: string, elementId: string) {
     return setInterval(updateTime, 60000)
 }
 
-;(async () => {
+; (async () => {
     await fetchUserData()
     const tz = await fetchTimezone()
     initTimezoneClock(tz, 'user-timezone-text')

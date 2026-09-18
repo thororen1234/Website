@@ -22,7 +22,8 @@ export interface Project {
     end?: number
     title: string
     description: string
-    url: string
+    url?: string
+    github?: string
     icon?: string
     tasks?: string[]
 }
