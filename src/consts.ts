@@ -7,6 +7,7 @@ import {
     MapPin,
     User,
 } from '@lucide/astro'
+import Codeberg from './components/Icons/Codeberg.astro'
 import Github from './components/Icons/Github.astro'
 import Twitter from './components/Icons/Twitter.astro'
 
@@ -61,10 +62,15 @@ export const socials: Social[] = [
         icon: Github,
     },
     {
+        text: 'Codeberg',
+        url: 'https://codeberg.org/thororen',
+        icon: Codeberg,
+    },
+    {
         text: 'Last.FM',
         url: 'https://www.last.fm/user/thororen',
         icon: LastFM,
-    },
+    }
 ]
 
 export const skills: Skill[] = [
