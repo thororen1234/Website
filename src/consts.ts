@@ -2,13 +2,13 @@ import type { Info, Social, Skill, Project } from './types'
 import {
     AlarmClock,
     BookOpen,
-    Github,
     Heart,
     ListMusic,
     MapPin,
     User,
-    Twitter,
 } from '@lucide/astro'
+import Github from './components/Icons/Github.astro'
+import Twitter from './components/Icons/Twitter.astro'
 
 import Desktop from './assets/desktop.svg'
 import Embedded from './assets/embedded.svg'
@@ -17,8 +17,9 @@ import Mobile from './assets/mobile.svg'
 import Web from './assets/web.svg'
 
 export const discordUserId = '848339671629299742'
+export const pfpFallback = '/assets/fallback.png'
 
-export const Information: Info[] = [
+export const information: Info[] = [
     {
         icon: MapPin,
         text: 'United States',
@@ -36,14 +37,14 @@ export const MiscIcons = {
     ListMusic: ListMusic,
 }
 
-export const Platforms = {
+export const platforms = {
     Web: Web,
     Mobile: Mobile,
     Desktop: Desktop,
     Embedded: Embedded,
 }
 
-export const Socials: Social[] = [
+export const socials: Social[] = [
     {
         text: 'Donate',
         url: 'https://github.com/sponsors/thororen1234',
@@ -66,7 +67,7 @@ export const Socials: Social[] = [
     },
 ]
 
-export const Skills: Skill[] = [
+export const skills: Skill[] = [
     {
         text: 'Software engineering',
         description: 'JavaScript, TypeScript, and more',
@@ -84,7 +85,7 @@ export const Skills: Skill[] = [
     },
 ]
 
-export const Projects: Project[] = [
+export const projects: Project[] = [
     {
         start: 2023,
         title: 'Equicord',
@@ -112,7 +113,7 @@ export const Projects: Project[] = [
         title: 'Surge',
         description:
             'Surge was a continuation of Hybris after it was abandoned and was greatly expanded upon but ultimately abandoned as well.',
-        url: 'https://github.com/SurgeLauncher'
+        url: 'https://github.com/SurgeLauncher',
     },
     {
         start: 2023,
@@ -136,7 +137,7 @@ export const Projects: Project[] = [
         title: 'Neoblade',
         description:
             'Neoblade was a continuation of Beycord after multiple attempts from others such as Beycord+ or Beycord (2021) but was considered a failed project and abandoned.',
-        url: 'https://github.com/disbored/beycord'
+        url: 'https://github.com/disbored/beycord',
     },
     {
         start: 2020,
@@ -148,7 +149,7 @@ export const Projects: Project[] = [
     },
 ]
 
-const BASE_FRIENDS = [
+const friendsList = [
     {
         url: 'https://www.naibuu.dev',
         fallback: 'https://avatars.githubusercontent.com/u/81579850',
@@ -172,7 +173,7 @@ const BASE_FRIENDS = [
     },
 ]
 
-export const Friends = BASE_FRIENDS.map(({ fallback, ...f }) => ({
+export const friends = friendsList.map(({ fallback, ...f }) => ({
     ...f,
     img: `/assets/profile?userId=${f.id}&fallbackUrl=${encodeURIComponent(fallback)}`,
 }))

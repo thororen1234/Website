@@ -25,8 +25,12 @@ async function fetchUserData() {
         const clan = user?.primary_guild
 
         if (clan?.tag && clan?.identity_guild_id && clan?.badge) {
-            const clanBadgeContainer = document.getElementById('clan-badge-container')
-            const clanBadgeImg = document.getElementById('clan-badge-img') as HTMLImageElement
+            const clanBadgeContainer = document.getElementById(
+                'clan-badge-container',
+            )
+            const clanBadgeImg = document.getElementById(
+                'clan-badge-img',
+            ) as HTMLImageElement
             const clanBadgeName = document.getElementById('clan-badge-name')
 
             if (clanBadgeContainer && clanBadgeImg && clanBadgeName) {
@@ -40,10 +44,14 @@ async function fetchUserData() {
         const platformIconsContainer = document.getElementById('platform-icons')
         if (platformIconsContainer) {
             let iconsHTML = ''
-            if (lanyardData?.active_on_discord_web) iconsHTML += platformIcons.web
-            if (lanyardData?.active_on_discord_mobile) iconsHTML += platformIcons.mobile
-            if (lanyardData?.active_on_discord_desktop) iconsHTML += platformIcons.desktop
-            if (lanyardData?.active_on_discord_embedded) iconsHTML += platformIcons.embedded
+            if (lanyardData?.active_on_discord_web)
+                iconsHTML += platformIcons.web
+            if (lanyardData?.active_on_discord_mobile)
+                iconsHTML += platformIcons.mobile
+            if (lanyardData?.active_on_discord_desktop)
+                iconsHTML += platformIcons.desktop
+            if (lanyardData?.active_on_discord_embedded)
+                iconsHTML += platformIcons.embedded
             if (lanyardData?.active_on_discord_vr) iconsHTML += platformIcons.vr
             platformIconsContainer.innerHTML = iconsHTML
         }
@@ -52,8 +60,11 @@ async function fetchUserData() {
             (a: { type: number }) => a.type === 4,
         )
         if (customStatus?.state) {
-            const customStatusContainer = document.getElementById('custom-status-container')
-            const customStatusText = document.getElementById('custom-status-text')
+            const customStatusContainer = document.getElementById(
+                'custom-status-container',
+            )
+            const customStatusText =
+                document.getElementById('custom-status-text')
             if (customStatusContainer && customStatusText) {
                 customStatusText.textContent = customStatus.state
                 customStatusContainer.classList.remove('hidden')
@@ -65,10 +76,12 @@ async function fetchUserData() {
             (a: { type: number }) => a.type !== 4,
         )
         if (activity) {
-            const activityContainer = document.getElementById('activity-container')
+            const activityContainer =
+                document.getElementById('activity-container')
             const activityText = document.getElementById('activity-text')
             if (activityContainer && activityText) {
-                activityText.textContent = activity?.details || activity?.name || ''
+                activityText.textContent =
+                    activity?.details || activity?.name || ''
                 activityContainer.classList.remove('hidden')
                 activityContainer.classList.add('flex')
             }
@@ -90,18 +103,20 @@ async function fetchBadges() {
         if (badgeRes.ok) {
             const badgeData = await badgeRes.json()
             if (badgeData?.badges) {
-                Object.entries(badgeData.badges).forEach(([type, badgeList]) => {
-                    if (Array.isArray(badgeList)) {
-                        badgeList.forEach((badge) => {
-                            if (badge?.badge) {
-                                badges.push({
-                                    tooltip: `${type}: ${badge.tooltip}`,
-                                    icon: badge.badge,
-                                })
-                            }
-                        })
-                    }
-                })
+                Object.entries(badgeData.badges).forEach(
+                    ([type, badgeList]) => {
+                        if (Array.isArray(badgeList)) {
+                            badgeList.forEach((badge) => {
+                                if (badge?.badge) {
+                                    badges.push({
+                                        tooltip: `${type}: ${badge.tooltip}`,
+                                        icon: badge.badge,
+                                    })
+                                }
+                            })
+                        }
+                    },
+                )
             }
         }
 
@@ -149,7 +164,7 @@ function initTimezoneClock(timezone: string, elementId: string) {
     return setInterval(updateTime, 60000)
 }
 
-; (async () => {
+;(async () => {
     await fetchUserData()
     const tz = await fetchTimezone()
     initTimezoneClock(tz, 'user-timezone-text')

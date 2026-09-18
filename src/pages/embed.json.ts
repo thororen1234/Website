@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro'
-import { Socials, Projects } from '@/consts'
+import { socials, projects } from '@/consts'
 
 const ACCENT_COLOR = 0x970000
 
 export const GET: APIRoute = ({ site, url }) => {
     const origin = site?.origin ?? url.origin
-    const currentProjects = Projects.filter((p) => !p.end).slice(0, 3)
+    const currentProjects = projects.filter((p) => !p.end).slice(0, 3)
 
     const component = {
         type: 17,
@@ -23,7 +23,7 @@ export const GET: APIRoute = ({ site, url }) => {
                 accessory: {
                     type: 11,
                     media: { url: `${origin}/assets/profile` },
-                    description: "My avatar",
+                    description: 'My avatar',
                 },
             },
             { type: 14 },
@@ -32,18 +32,19 @@ export const GET: APIRoute = ({ site, url }) => {
                 content: `**Currently building**\n
                     ${currentProjects
                         .map((p) => `[${p.title}](${p.url})`)
-                        .join(' • ')
-                    }`,
+                        .join(' • ')}`,
             },
             { type: 14, spacing: 1 },
             {
                 type: 1,
-                components: Socials.filter(s => s.text !== "Donate").map(s => ({
-                    type: 2,
-                    style: 5,
-                    url: s.url,
-                    label: s.text,
-                })),
+                components: socials
+                    .filter((s) => s.text !== 'Donate')
+                    .map((s) => ({
+                        type: 2,
+                        style: 5,
+                        url: s.url,
+                        label: s.text,
+                    })),
             },
         ],
     }

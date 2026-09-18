@@ -1,7 +1,4 @@
-import { discordUserId } from '@/consts'
-
-const DEFAULT_USER_ID = discordUserId
-const DEFAULT_FALLBACK_URL = '/assets/fallback.png'
+import { discordUserId, pfpFallback } from '@/consts'
 
 async function getFallbackImage(fallbackUrl: string, request: Request) {
     const absoluteUrl = new URL(fallbackUrl, request.url).toString()
@@ -14,7 +11,9 @@ async function getFallbackImage(fallbackUrl: string, request: Request) {
 }
 
 async function getDiscordAvatar(userId: string) {
-    const lanyardResponse = await fetch(`https://lanyard.equicord.org/v1/users/${userId}`)
+    const lanyardResponse = await fetch(
+        `https://lanyard.equicord.org/v1/users/${userId}`,
+    )
     if (!lanyardResponse.ok) {
         throw new Error('Lanyard fetch failed')
     }
@@ -37,8 +36,8 @@ async function getDiscordAvatar(userId: string) {
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId') ?? DEFAULT_USER_ID
-    const fallbackUrl = searchParams.get('fallbackUrl') ?? DEFAULT_FALLBACK_URL
+    const userId = searchParams.get('userId') ?? discordUserId
+    const fallbackUrl = searchParams.get('fallbackUrl') ?? pfpFallback
 
     try {
         const imageBuffer = await getDiscordAvatar(userId)

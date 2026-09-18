@@ -1,6 +1,6 @@
 ---
 import { UserCircle } from '@lucide/astro'
-import { Information, MiscIcons } from '@/consts'
+import { information, MiscIcons } from '@/consts'
 import Box from '@/components/Base/Box.astro'
 ---
 
@@ -9,14 +9,12 @@ import Box from '@/components/Base/Box.astro'
 </span>
 
 <Box>
-    {
-        Information.map((info) => (
-            <span class="flex items-center gap-1 font-medium text-neutral-700 dark:text-neutral-200">
-                <info.icon size="18" />
-                {info.text}
-            </span>
-        ))
-    }
+    {information.map((info) => (
+        <span class="flex items-center gap-1 font-medium text-neutral-700 dark:text-neutral-200">
+            <info.icon size="18" />
+            {info.text}
+        </span>
+    ))}
 
     <span class="flex items-center gap-1 font-medium text-neutral-700 dark:text-neutral-200">
         <MiscIcons.AlarmClock size="18" />

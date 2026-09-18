@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import { Skills, Projects } from '@/consts'
+import { skills, projects } from '@/consts'
 import { Highlighter, Notebook, Star } from '@lucide/astro'
 
 import Box from '@/components/Base/Box.astro'
@@ -11,9 +11,7 @@ import Tag from '@/components/Base/Tag.astro'
 
 <Layout>
     <!-- Me -->
-    <span
-        class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
-    >
+    <span class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
         <Highlighter size="18" fill="#ffffff10" /> Me
     </span>
 
@@ -24,9 +22,7 @@ import Tag from '@/components/Base/Tag.astro'
     </Box>
 
     <!-- Skills -->
-    <span
-        class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
-    >
+    <span class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
         <Star size="18" fill="#ffffff10" /> Skills
         <Tag className="bg-zinc-300">
             {new Date().getFullYear() - 2019} Years
@@ -34,17 +30,19 @@ import Tag from '@/components/Base/Tag.astro'
     </span>
 
     <Box>
-        {Skills.map((skill) => <SkillCard {...skill} />)}
+        {skills.map((skill) => (
+            <SkillCard {...skill} />
+        ))}
     </Box>
 
     <!-- Projects -->
-    <span
-        class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400"
-    >
+    <span class="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
         <Notebook size="18" fill="#ffffff10" /> Projects
     </span>
 
     <div class="flex flex-wrap gap-3">
-        {Projects.map((project) => <ProjectCard {...project} />)}
+        {projects.map((project) => (
+            <ProjectCard {...project} />
+        ))}
     </div>
 </Layout>
