@@ -10,6 +10,7 @@ import {
 import Github from "./components/Icons/Github"
 import Twitter from "./components/Icons/Twitter"
 import LastFM from "./components/Icons/LastFM"
+import Codeberg from "./components/Icons/Codeberg"
 
 export const siteUrl = "https://www.thororen.com"
 export const discordUserId = "848339671629299742"
@@ -50,10 +51,15 @@ export const socials: Social[] = [
         icon: Github,
     },
     {
-        text: "Last.FM",
-        url: "https://www.last.fm/user/thororen",
-        icon: LastFM,
+        text: 'Codeberg',
+        url: 'https://codeberg.org/thororen',
+        icon: Codeberg,
     },
+    {
+        text: 'Last.FM',
+        url: 'https://www.last.fm/user/thororen',
+        icon: LastFM,
+    }
 ]
 
 export const skills: Skill[] = [
