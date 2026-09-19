@@ -6,6 +6,7 @@ import ActivityFeed from "@/components/Widgets/ActivityFeed"
 import CodingSection from "@/components/Widgets/CodingSection"
 import ListeningSection from "@/components/Widgets/ListeningSection"
 import SteamSection from "@/components/Widgets/SteamSection"
+import HypixelSection from "@/components/Widgets/HypixelSection"
 import WatchingSection from "@/components/Widgets/WatchingSection"
 
 export const revalidate = 60
@@ -25,6 +26,7 @@ export default function Now() {
             <div className="grid items-start gap-8 lg:grid-cols-2">
                 <div className="flex flex-col gap-8 empty:hidden">
                     <SteamSection />
+                    <HypixelSection />
                     <ListeningSection />
                     <WatchingSection />
                 </div>

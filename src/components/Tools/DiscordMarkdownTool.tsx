@@ -962,7 +962,7 @@ function Preview({
                                         />
                                     </div>
                                 )}
-                                <pre className="[scrollbar-width:none] overflow-x-auto p-3 font-mono text-sm leading-5 text-[#dbdee1] [&::-webkit-scrollbar]:hidden">
+                                <pre className="scrollbar-none overflow-x-auto p-3 font-mono text-sm leading-5 text-[#dbdee1] [&::-webkit-scrollbar]:hidden">
                                     {isAnsi ? (
                                         <AnsiText value={code} />
                                     ) : showSyntax && shiki ? (
@@ -1057,7 +1057,7 @@ export default function DiscordMarkdownTool() {
                         onChange={(event) => setInput(event.target.value)}
                         rows={16}
                         spellCheck={false}
-                        className={`${fieldClass} resize-y [scrollbar-width:none] font-mono leading-5 [&::-webkit-scrollbar]:hidden`}
+                        className={`${fieldClass} resize-y scrollbar-none font-mono leading-5 [&::-webkit-scrollbar]:hidden`}
                     />
                 </Box>
             </div>
