@@ -22,6 +22,22 @@ const linkRows = (links: Link[]) =>
         })),
     }))
 
+const AVATAR = { url: `${siteUrl}/assets/profile`, description: "My avatar" }
+const FAVICON = {
+    url: `${siteUrl}/assets/favicon.png`,
+    description: "Site icon",
+}
+
+const header = (content: string, icon = AVATAR) => ({
+    type: 9,
+    components: [{ type: 10, content }],
+    accessory: {
+        type: 11,
+        media: { url: icon.url },
+        description: icon.description,
+    },
+})
+
 export function siteEmbed() {
     const currentProjects = projects.filter((p) => !p.end).slice(0, 2)
 
@@ -29,21 +45,9 @@ export function siteEmbed() {
         type: 17,
         accent_color: ACCENT_COLOR,
         components: [
-            {
-                type: 9,
-                components: [
-                    {
-                        type: 10,
-                        content:
-                            "# thororen\nSoftware developer from the United States with experience in TypeScript, JavaScript, Python, and Go.",
-                    },
-                ],
-                accessory: {
-                    type: 11,
-                    media: { url: `${siteUrl}/assets/profile` },
-                    description: "My avatar",
-                },
-            },
+            header(
+                "# thororen\nSoftware developer from the United States with experience in TypeScript, JavaScript, Python, and Go.",
+            ),
             { type: 14 },
             {
                 type: 10,
@@ -79,43 +83,27 @@ export function projectEmbed(project: Project) {
         type: 17,
         accent_color: ACCENT_COLOR,
         components: [
-            {
-                type: 9,
-                components: [
-                    {
-                        type: 10,
-                        content: `# ${title}\n${about}\n-# ${status}`,
-                    },
-                ],
-                ...(icon && {
-                    accessory: {
-                        type: 11,
-                        media: { url: `${siteUrl}${icon}` },
-                        description: `${title} icon`,
-                    },
-                }),
-            },
+            header(
+                `# ${title}\n${about}\n-# ${status}`,
+                icon
+                    ? { url: `${siteUrl}${icon}`, description: `${title} icon` }
+                    : undefined,
+            ),
             { type: 14, spacing: 1 },
             ...linkRows(links),
         ],
     }
 }
 
-export function pageEmbed(title: string, description: string) {
+export function pageEmbed(
+    title: string,
+    description: string,
+    icon?: typeof AVATAR,
+) {
     return {
         type: 17,
         accent_color: ACCENT_COLOR,
-        components: [
-            {
-                type: 9,
-                components: [
-                    {
-                        type: 10,
-                        content: `# ${title}\n${description}`,
-                    },
-                ],
-            },
-        ],
+        components: [header(`# ${title}\n${description}`, icon)],
     }
 }
 
@@ -124,15 +112,7 @@ export function miscEmbed(page: MiscPage) {
         type: 17,
         accent_color: ACCENT_COLOR,
         components: [
-            {
-                type: 9,
-                components: [
-                    {
-                        type: 10,
-                        content: `# ${page.title}\n${page.description}`,
-                    },
-                ],
-            },
+            header(`# ${page.title}\n${page.description}`, FAVICON),
             { type: 14, spacing: 1 },
             ...linkRows([
                 { label: "Open page", url: `${siteUrl}${page.href}` },
@@ -142,7 +122,10 @@ export function miscEmbed(page: MiscPage) {
     }
 }
 
-const PAGE_INFO: Record<string, { title: string; description: string }> = {
+const PAGE_INFO: Record<
+    string,
+    { title: string; description: string; icon?: typeof AVATAR }
+> = {
     projects: {
         title: "Projects",
         description:
@@ -157,6 +140,7 @@ const PAGE_INFO: Record<string, { title: string; description: string }> = {
         title: "Misc",
         description:
             "Small standalone pages and tools that don't fit anywhere else.",
+        icon: FAVICON,
     },
 }
 
@@ -177,5 +161,7 @@ export function getEmbed(params: URLSearchParams) {
     }
 
     const info = page ? PAGE_INFO[page] : undefined
-    return info ? pageEmbed(info.title, info.description) : siteEmbed()
+    return info
+        ? pageEmbed(info.title, info.description, info.icon)
+        : siteEmbed()
 }
