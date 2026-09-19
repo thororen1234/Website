@@ -1,17 +1,19 @@
 import type { Metadata } from "next"
 
-const image = "/assets/fallback.png"
+const fallbackImage = "/assets/avatar/fallback.png"
 
 interface Options {
     title: string
     description: string
     path?: string
+    image?: string
 }
 
 export function createMetadata({
     title,
     description,
     path,
+    image = fallbackImage,
 }: Options): Metadata {
     return {
         title,

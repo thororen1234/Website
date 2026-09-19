@@ -1,10 +1,22 @@
-import { Highlighter, Notebook, Star } from "lucide-react"
-import { projects, skills } from "@/consts"
+import Link from "next/link"
+import {
+    ArrowRight,
+    Activity,
+    Hammer,
+    Highlighter,
+    Share2,
+    Users,
+} from "lucide-react"
+import { projects } from "@/consts"
 import { createMetadata } from "@/lib/metadata"
-import Box from "@/components/Base/Box"
-import Tag from "@/components/Base/Tag"
-import ProjectCard from "@/components/Cards/ProjectCard"
-import SkillCard from "@/components/Cards/SkillCard"
+import { isActive } from "@/lib/projects"
+import Section from "@/components/Base/Section"
+import ProjectGrid from "@/components/Cards/ProjectGrid"
+import Friends from "@/components/Profile/Friends"
+import DiscordEmbed from "@/components/Layout/DiscordEmbed"
+import Hero from "@/components/Profile/Hero"
+import Socials from "@/components/Profile/Socials"
+import LiveWidgets from "@/components/Widgets/LiveWidgets"
 
 export const revalidate = 3600
 
@@ -16,42 +28,45 @@ export const metadata = createMetadata({
 })
 
 export default function Home() {
+    const current = projects.filter(isActive)
+
     return (
         <>
-            {/* Me */}
-            <span className="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                <Highlighter size={18} fill="#ffffff10" /> Me
-            </span>
+            <DiscordEmbed />
 
-            <Box>
-                Hi! I&apos;m Thor! I&apos;m a software developer from the United
-                States of America with experience in languages such as
-                TypeScript, JavaScript, Python, and Go.
-            </Box>
+            <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_24rem]">
+                <Section icon={Highlighter} title="Me">
+                    <Hero />
+                </Section>
 
-            {/* Skills */}
-            <span className="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                <Star size={18} fill="#ffffff10" /> Skills
-                <Tag className="bg-zinc-300">
-                    {new Date().getFullYear() - 2019} Years
-                </Tag>
-            </span>
+                <Section icon={Activity} title="Live">
+                    <LiveWidgets className="xl:grid-cols-1" />
+                </Section>
+            </div>
 
-            <Box>
-                {skills.map((skill) => (
-                    <SkillCard key={skill.text} {...skill} />
-                ))}
-            </Box>
+            <Section
+                icon={Hammer}
+                title="Currently building"
+                action={
+                    <Link
+                        href="/projects"
+                        className="flex items-center gap-1 hover:text-rose-500"
+                    >
+                        All projects <ArrowRight size={14} />
+                    </Link>
+                }
+            >
+                <ProjectGrid projects={current} />
+            </Section>
 
-            {/* Projects */}
-            <span className="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                <Notebook size={18} fill="#ffffff10" /> Projects
-            </span>
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                <Section icon={Share2} title="Find me">
+                    <Socials />
+                </Section>
 
-            <div className="flex flex-wrap gap-3">
-                {projects.map((project) => (
-                    <ProjectCard key={project.title} {...project} />
-                ))}
+                <Section icon={Users} title="Friends">
+                    <Friends />
+                </Section>
             </div>
         </>
     )

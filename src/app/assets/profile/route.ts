@@ -36,7 +36,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get("userId") ?? discordUserId
 
-    // Only known users are served, so callers can't choose which URLs we fetch
     const fallbackUrl = avatarFallbacks.get(userId)
     if (!fallbackUrl) {
         return new Response("Unknown user", { status: 404 })

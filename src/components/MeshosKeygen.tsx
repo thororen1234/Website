@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { buttonClass, fieldClass } from "@/components/Tools/fields"
 
 function gen(id: string) {
     const s = id.replace(/[:\- \\]/g, "")
@@ -28,24 +29,29 @@ export default function MeshosKeygen() {
         <>
             <input
                 type="text"
+                aria-label="Android ID or device ID"
                 placeholder="Android ID / Device ID"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
                     if (e.key === "Enter") run()
                 }}
-                className="w-full rounded-lg border border-zinc-300 bg-zinc-50 p-3 text-neutral-800 outline-none focus:border-neutral-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-neutral-200 dark:focus:border-neutral-500"
+                className={fieldClass}
             />
 
-            <button
-                onClick={run}
-                className="w-full cursor-pointer rounded-lg border border-zinc-300 bg-zinc-200 p-3 font-bold tracking-widest text-neutral-800 transition-colors hover:bg-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-neutral-200 dark:hover:bg-zinc-700"
-            >
+            <button type="button" onClick={run} className={buttonClass}>
                 Generate
             </button>
 
-            <div className="mt-2 flex min-h-12 items-center justify-center rounded-lg bg-zinc-200 p-3 text-center tracking-widest break-all text-neutral-800 dark:bg-zinc-950 dark:text-neutral-200">
-                {output}
+            <div
+                aria-live="polite"
+                className={`mt-2 flex min-h-12 items-center justify-center rounded-xl bg-zinc-200 px-3 py-2 text-center font-mono text-sm tracking-widest break-all dark:bg-zinc-800 ${
+                    output
+                        ? "text-neutral-800 dark:text-neutral-200"
+                        : "text-neutral-500 dark:text-neutral-400"
+                }`}
+            >
+                {output || "Your device key will appear here."}
             </div>
         </>
     )

@@ -1,13 +1,7 @@
 "use client"
 
 import { useProfile } from "@/lib/profile"
-
-const statusColors: Record<string, string> = {
-    online: "#23a55a",
-    idle: "#f0b232",
-    dnd: "#f23f43",
-    offline: "#949ba4",
-}
+import { statusColors } from "@/lib/status"
 
 export default function Avatar({ size }: { size: number }) {
     const { lanyard, decorUrl } = useProfile()

@@ -14,13 +14,31 @@ export interface Social extends Info {
     url: string
 }
 
-export interface Skill {
+export interface NavLink {
     text: string
+    href: string
+    icon: Icon
+}
+
+export interface MiscPage {
+    title: string
     description: string
-    progress: number
+    href: string
+    icon: Icon
+}
+
+export interface Repo {
+    name: string
+    description: string | null
+    url: string
+    language: string | null
+    stars: number
+    fork: boolean
+    archived: boolean
 }
 
 export interface Project {
+    slug: string
     start: number
     end?: number
     title: string
@@ -29,6 +47,8 @@ export interface Project {
     github?: string
     icon?: string
     tasks?: string[]
+    details?: string[]
+    tags?: string[]
 }
 
 export interface Product {
@@ -36,7 +56,7 @@ export interface Product {
     cover: string
     title: string
     description: string
-    price: number // 0 = Free
+    price: number
 }
 
 export interface LanyardActivity {

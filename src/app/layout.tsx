@@ -1,7 +1,6 @@
 import "@/styles/global.css"
 import type { Metadata, Viewport } from "next"
 import type { ReactNode } from "react"
-import ThemeToggle from "@/components/ThemeToggle"
 import { siteUrl } from "@/consts"
 
 export const metadata: Metadata = {
@@ -13,7 +12,6 @@ export const viewport: Viewport = {
     themeColor: "#970000ff",
 }
 
-// Runs before first paint so the saved theme applies without a flash
 const themeScript = `try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';localStorage.setItem('theme',t)}document.documentElement.setAttribute('data-theme',t)}catch(e){}`
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -25,10 +23,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
             </head>
             <body>
-                <ThemeToggle />
                 {children}
 
-                {/* thor stuff */}
                 <div style={{ display: "none" }}>
                     <a
                         href="https://www.abuseipdb.com/user/201906"

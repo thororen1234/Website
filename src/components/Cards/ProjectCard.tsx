@@ -1,97 +1,67 @@
-"use client"
-
-import { useState } from "react"
-import { Calendar, ChevronDown, ChevronUp } from "lucide-react"
+import Link from "next/link"
+import { ArrowRight, Calendar, ExternalLink } from "lucide-react"
 import Github from "@/components/Icons/Github"
+import Tag from "@/components/Base/Tag"
+import ProjectIcon from "@/components/Base/ProjectIcon"
+import { isActive, yearRange } from "@/lib/projects"
 import type { Project } from "@/types"
 
-export default function ProjectCard({
-    start,
-    end,
-    title,
-    description,
-    url,
-    github,
-    icon,
-    tasks,
-}: Project) {
-    const [open, setOpen] = useState(false)
-    const hasTasks = Boolean(tasks?.length)
+export default function ProjectCard(project: Project) {
+    const { slug, title, description, url, github, icon } = project
+    const active = isActive(project)
 
     return (
-        <div className="relative flex-1">
-            {url && (
-                <a
-                    href={url}
-                    target="_blank"
-                    aria-label={title}
-                    className="absolute inset-0 z-0 rounded-2xl transition-transform active:scale-[.98]"
-                />
-            )}
+        <div className="group relative flex flex-col gap-3 rounded-2xl border border-zinc-300 bg-zinc-100 px-6 py-5 text-neutral-800 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300 dark:hover:border-zinc-700">
+            <Link
+                href={`/projects/${slug}`}
+                aria-label={`${title} details`}
+                className="absolute inset-0 z-0 rounded-2xl"
+            />
 
-            <div className="flex h-48 min-w-96 flex-col gap-1 rounded-2xl border border-zinc-300 bg-zinc-100 px-8 py-6 text-neutral-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300">
-                <h4 className="flex items-center gap-2 font-medium text-neutral-800 dark:text-neutral-200">
-                    {icon && (
-                        <img
-                            src={icon}
-                            alt=""
-                            width={28}
-                            height={28}
-                            draggable={false}
-                            className="rounded select-none"
-                            onError={(e) => {
-                                e.currentTarget.style.display = "none"
-                            }}
-                        />
-                    )}
-                    {title}
+            <h3 className="flex items-center gap-2 font-medium text-neutral-800 dark:text-neutral-200">
+                {icon && <ProjectIcon src={icon} size={28} />}
+                {title}
 
-                    <span className="relative z-10 ml-auto flex items-center gap-3 text-sm">
-                        {github && (
-                            <a
-                                href={github}
-                                target="_blank"
-                                aria-label="View source on GitHub"
-                                className="text-neutral-500 transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
-                            >
-                                <Github size={16} />
-                            </a>
-                        )}
-                        <span className="flex items-center gap-1">
-                            <Calendar size={16} fill="#ffffff10" />
-                            {end ? `${start} - ${end}` : `Since ${start}`}
-                        </span>
-                    </span>
-                </h4>
-
-                <p className="text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-                    {description}
-                </p>
-
-                {hasTasks && (
-                    <div className="relative z-10 w-fit">
-                        <button
-                            type="button"
-                            onClick={() => setOpen((prev) => !prev)}
-                            className="inline-flex w-fit cursor-pointer items-center gap-1 rounded-full bg-zinc-200 px-3 py-1 text-xs font-medium text-neutral-800 hover:bg-zinc-300/80 dark:bg-zinc-800 dark:text-neutral-300 dark:hover:bg-zinc-700/50"
+                <span className="relative z-10 ml-auto flex items-center gap-3 text-neutral-500">
+                    {url && (
+                        <a
+                            href={url}
+                            target="_blank"
+                            aria-label={`Visit ${title}`}
+                            className="transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
                         >
-                            {open ? "Hide tasks" : "View tasks"}
-                            {open ? (
-                                <ChevronUp size={12} />
-                            ) : (
-                                <ChevronDown size={12} />
-                            )}
-                        </button>
+                            <ExternalLink size={16} />
+                        </a>
+                    )}
+                    {github && (
+                        <a
+                            href={github}
+                            target="_blank"
+                            aria-label="View source on GitHub"
+                            className="transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+                        >
+                            <Github size={16} />
+                        </a>
+                    )}
+                </span>
+            </h3>
 
-                        {open && (
-                            <ul className="absolute top-full left-0 z-20 mt-2 max-h-48 w-64 list-disc space-y-1 overflow-y-auto rounded-xl border border-zinc-300 bg-zinc-50 p-3 pl-8 text-sm text-neutral-600 shadow-lg dark:border-zinc-700 dark:bg-zinc-800 dark:text-neutral-400">
-                                {tasks!.map((task) => (
-                                    <li key={task}>{task}</li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                )}
+            <p className="line-clamp-3 text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+                {description}
+            </p>
+
+            <div className="mt-auto flex items-center gap-2 pt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                <Tag className={active ? "bg-emerald-500/20" : ""}>
+                    {active ? "Active" : "Past"}
+                </Tag>
+                <span className="flex items-center gap-1">
+                    <Calendar size={14} />
+                    {yearRange(project)}
+                </span>
+
+                <span className="ml-auto flex items-center gap-1 font-medium transition-colors group-hover:text-rose-500">
+                    Details <ArrowRight size={14} />
+                </span>
             </div>
         </div>
     )

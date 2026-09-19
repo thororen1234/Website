@@ -1,20 +1,114 @@
-import type { Info, Social, Skill, Project } from "./types"
+import type { Info, MiscPage, NavLink, Social, Project } from "./types"
 import {
-    AlarmClock,
-    BookOpen,
+    Archive,
+    Bot,
+    Clock,
+    Hash,
     Heart,
-    ListMusic,
+    House,
+    KeyRound,
     MapPin,
+    MessageSquareCode,
+    Notebook,
+    Palette,
+    Pickaxe,
+    Radio,
+    Shapes,
     User,
+    Wrench,
 } from "lucide-react"
 import Github from "./components/Icons/Github"
 import Twitter from "./components/Icons/Twitter"
 import LastFM from "./components/Icons/LastFM"
 import Codeberg from "./components/Icons/Codeberg"
+import Discord from "./components/Icons/Discord"
+import Steam from "./components/Icons/Steam"
 
 export const siteUrl = "https://www.thororen.com"
 export const discordUserId = "848339671629299742"
-export const pfpFallback = "/assets/fallback.png"
+export const pfpFallback = "/assets/avatar/fallback.png"
+export const githubUser = "thororen1234"
+export const lastfmUser = "thororen"
+export const lastfmApiKey = "ac7abdcfbbad42c788e072bbe43f1be6"
+
+export const malUsername = "thororen"
+export const steamId = "76561198278966555"
+
+export const bio =
+    "Hi! I'm Thor! I'm a software developer from the United States of America with experience in languages such as TypeScript, JavaScript, Python, and Go."
+
+export const navLinks: NavLink[] = [
+    { text: "Home", href: "/", icon: House },
+    { text: "Projects", href: "/projects", icon: Notebook },
+    { text: "Now", href: "/now", icon: Radio },
+    { text: "Misc", href: "/misc", icon: Shapes },
+]
+
+export const miscPages: MiscPage[] = [
+    {
+        title: "Embed Color Converter",
+        description:
+            "Convert between hex, decimal, RGB and HSL values for Discord embed colors.",
+        href: "/misc/color",
+        icon: Palette,
+    },
+    {
+        title: "Bot Invite Generator",
+        description:
+            "Build a Discord bot invite link and inspect its permission number.",
+        href: "/misc/bot-invite",
+        icon: Bot,
+    },
+    {
+        title: "Snowflake Decoder",
+        description:
+            "Paste a Discord ID, mention or message link to see when it was created.",
+        href: "/misc/snowflake",
+        icon: Hash,
+    },
+    {
+        title: "Timestamp Generator",
+        description:
+            "Make Discord timestamp codes that show the right time for everyone.",
+        href: "/misc/timestamp",
+        icon: Clock,
+    },
+    {
+        title: "Discord Markdown Preview",
+        description:
+            "Preview Discord markdown, spoilers, quotes and code blocks before you send them.",
+        href: "/misc/discord-markdown",
+        icon: MessageSquareCode,
+    },
+    {
+        title: "Developer Tools",
+        description:
+            "Encode Base64, format JSON and generate hashes without sending your text anywhere.",
+        href: "/misc/dev-tools",
+        icon: Wrench,
+    },
+    {
+        title: "Minecraft Formatting",
+        description:
+            "Preview Minecraft color and style codes written with & or §.",
+        href: "/misc/minecraft-formatting",
+        icon: Pickaxe,
+    },
+    {
+        title: "MeshOS Keygen",
+        description:
+            "Generate device keys for MeshOS, with APK and firmware downloads.",
+        href: "/misc/meshos",
+        icon: KeyRound,
+    },
+    {
+        title: "Beycord",
+        description:
+            "A small memorial for the Beycord Discord bot, which stopped running on April 1st, 2021.",
+        href: "/beycord",
+        icon: Archive,
+    },
+]
 
 export const information: Info[] = [
     {
@@ -27,13 +121,6 @@ export const information: Info[] = [
     },
 ]
 
-export const MiscIcons = {
-    User: User,
-    AlarmClock: AlarmClock,
-    BookOpen: BookOpen,
-    ListMusic: ListMusic,
-}
-
 export const socials: Social[] = [
     {
         text: "Donate",
@@ -41,47 +128,46 @@ export const socials: Social[] = [
         icon: Heart,
     },
     {
+        text: "GitHub",
+        url: "https://github.com/thororen1234",
+        icon: Github,
+    },
+    {
+        text: "Codeberg",
+        url: "https://codeberg.org/thororen",
+        icon: Codeberg,
+    },
+    {
         text: "Twitter",
         url: "https://x.com/thororen",
         icon: Twitter,
     },
     {
-        text: "Github",
-        url: "https://github.com/thororen1234",
-        icon: Github,
-    },
-    {
-        text: 'Codeberg',
-        url: 'https://codeberg.org/thororen',
-        icon: Codeberg,
-    },
-    {
-        text: 'Last.FM',
-        url: 'https://www.last.fm/user/thororen',
+        text: "Last.fm",
+        url: "https://www.last.fm/user/thororen",
         icon: LastFM,
-    }
-]
-
-export const skills: Skill[] = [
-    {
-        text: "Software engineering",
-        description: "JavaScript, TypeScript, and more",
-        progress: 95,
     },
+    ...(steamId
+        ? [
+              {
+                  text: "Steam",
+                  url: /^\d{17}$/.test(steamId)
+                      ? `https://steamcommunity.com/profiles/${steamId}`
+                      : `https://steamcommunity.com/id/${steamId}`,
+                  icon: Steam,
+              },
+          ]
+        : []),
     {
-        text: "Software development",
-        description: "Visual Studio Code",
-        progress: 85,
-    },
-    {
-        text: "Web development",
-        description: "SSR Frameworks and React",
-        progress: 75,
+        text: "Discord",
+        url: `https://discord.com/users/${discordUserId}`,
+        icon: Discord,
     },
 ]
 
 export const projects: Project[] = [
     {
+        slug: "equicord",
         start: 2023,
         title: "Equicord",
         description:
@@ -89,12 +175,17 @@ export const projects: Project[] = [
         url: "https://equicord.org",
         github: "https://github.com/Equicord",
         icon: "/assets/icons/equicord.png",
+        details: [
+            "It ships with 300+ plugins on top of the base client mod and installs through GUI or CLI installers on Windows, macOS and Linux, or can be built from source with pnpm.",
+        ],
+        tags: ["TypeScript", "Node.js", "Go", "Rust", "SolidJS"],
         tasks: [
             "Maintaining the project",
             "Working across the entire codebase",
         ],
     },
     {
+        slug: "cheatbreaker",
         start: 2023,
         title: "CheatBreaker",
         description:
@@ -102,12 +193,17 @@ export const projects: Project[] = [
         url: "https://cheatbreaker.net",
         github: "https://github.com/CheatBreakerNet",
         icon: "/assets/icons/cheatbreaker.png",
+        details: [
+            "It targets Minecraft 1.7 and 1.8 and comes with an integrated launcher, Discord integration and cosmetics.",
+        ],
+        tags: ["Java", "Kotlin", "Python", "TypeScript"],
         tasks: [
-            "Helped with the development, flushing out, and features of the new website",
-            "Helped with the development and features of the new launcher",
+            "Helping with the development, flushing out, and features of the new website",
+            "Helping with the development and features of the new launcher",
         ],
     },
     {
+        slug: "disbored",
         start: 2025,
         title: "Disbored",
         description:
@@ -115,12 +211,15 @@ export const projects: Project[] = [
         url: "https://surg.fyi/",
         github: "https://github.com/disbored",
         icon: "/assets/icons/disbored.png",
+        details: ["The organization is verified for the surg.fyi domain."],
+        tags: ["TypeScript", "JavaScript", "C#", "Express"],
         tasks: [
             "Contributing Discord bots, tools, and websites across the org",
             "Sending PRs to other projects under the org",
         ],
     },
     {
+        slug: "surge",
         start: 2024,
         end: 2025,
         title: "Surge",
@@ -128,6 +227,9 @@ export const projects: Project[] = [
             "Surge was a continuation of Hybris after it was abandoned and was greatly expanded upon but ultimately abandoned as well.",
         github: "https://github.com/SurgeLauncher",
         icon: "/assets/icons/surge.png",
+        details: [
+            "The organization's only public repository holds the Surge Launcher's translation files (MIT licensed JSON). The launcher's own source isn't public.",
+        ],
         tasks: [
             "Moderated the community",
             "Suggested ideas and features",
@@ -136,6 +238,7 @@ export const projects: Project[] = [
         ],
     },
     {
+        slug: "hybris",
         start: 2023,
         end: 2023,
         title: "Hybris",
@@ -144,6 +247,10 @@ export const projects: Project[] = [
         url: "https://hybrismc.dev",
         github: "https://github.com/hybrismc",
         icon: "/assets/icons/hybris.png",
+        details: [
+            'It was free and open source under GPL-3.0, billed by the organization as "the ultimate Minecraft client".',
+        ],
+        tags: ["Kotlin", "TypeScript"],
         tasks: [
             "Moderated the community",
             "Suggested ideas and features",
@@ -151,13 +258,19 @@ export const projects: Project[] = [
         ],
     },
     {
+        slug: "solar-tweaks",
         start: 2022,
         end: 2023,
         title: "Solar Tweaks",
         description:
             "Solar Tweaks is a custom Lunar Client launcher that provides different modifications for the client.",
-        github: "https://github.com/hybrismc",
+        github: "https://github.com/Solar-Tweaks",
         icon: "/assets/icons/solartweaks.png",
+        details: [
+            "Its modifications included freelook and server customization.",
+            "The organization announced it ceased operations on May 5, 2023.",
+        ],
+        tags: ["TypeScript", "JavaScript"],
         tasks: [
             "Moderated the community",
             "Suggested ideas and features",
@@ -165,6 +278,7 @@ export const projects: Project[] = [
         ],
     },
     {
+        slug: "neoblade",
         start: 2022,
         end: 2022,
         title: "Neoblade",
@@ -172,12 +286,18 @@ export const projects: Project[] = [
             "Neoblade was a continuation of Beycord after multiple attempts from others such as Beycord+ or Beycord (2021) but was considered a failed project and abandoned.",
         github: "https://github.com/thororen1234/Beycord/tree/neoblade",
         icon: "/assets/icons/neoblade.png",
+        details: [
+            "It lives on as a branch of the Beycord repository, a mash-up of Beycord+, Beycord and Beycord Rewrite with extra beys and features, kept for archival purposes.",
+            "It is a Node.js Discord bot with commands, a quest and item system, and Beyblade parts and bey data organized in their own folders.",
+        ],
+        tags: ["JavaScript", "Node.js"],
         tasks: [
             "Built on the open source Beycord and Beycord+ codebases",
             "Designed new commands and features",
         ],
     },
     {
+        slug: "beycord",
         start: 2020,
         end: 2021,
         title: "Beycord",
@@ -186,6 +306,11 @@ export const projects: Project[] = [
         url: "https://thororen.com/beycord",
         github: "https://github.com/thororen1234/Beycord",
         icon: "/assets/icons/beycord.png",
+        details: [
+            "Beycord was created by SunSOG as a hobby to learn programming and improve his English. It stopped running on April 1, 2021 and was later opened up as an open-source archive.",
+            "The repository preserves several generations of the bot: Beycord Original, Packaged and V13, Beycord+, Neoblade, and the related Beyblade-crafting tools BCWorkshop and BeyKit.",
+        ],
+        tags: ["JavaScript", "Node.js", "Discord.js"],
         tasks: [
             "Suggested ideas and features for the bot",
             "Helped with bug testing",
@@ -196,7 +321,7 @@ export const projects: Project[] = [
 
 const friendsList = [
     {
-        url: "https://www.naibuu.dev",
+        url: "https://naibuu.dev",
         fallback: "https://avatars.githubusercontent.com/u/81579850",
         alt: "itsnaibuu",
         name: "Naibuu",
