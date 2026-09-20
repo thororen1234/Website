@@ -19,8 +19,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <html lang="en" suppressHydrationWarning>
             <head>
                 <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-                <link rel="preconnect" href="https://rsms.me/" />
-                <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+                <link
+                    rel="preload"
+                    href="/assets/fonts/InterVariable.woff2"
+                    as="font"
+                    type="font/woff2"
+                    crossOrigin="anonymous"
+                />
             </head>
             <body>
                 {children}
