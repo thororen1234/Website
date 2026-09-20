@@ -41,6 +41,54 @@ async function fetchLanyard(): Promise<LanyardData | null> {
     return json?.data ?? null
 }
 
+function connectLanyard(onData: (lanyard: LanyardData) => void) {
+    let ws: WebSocket | null = null
+    let heartbeat: ReturnType<typeof setInterval> | undefined
+    let retry: ReturnType<typeof setTimeout> | undefined
+    let failures = 0
+    let closed = false
+
+    const open = () => {
+        const socket = new WebSocket("wss://lanyard.equicord.org/socket")
+        ws = socket
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data)
+
+            if (message.op === 1) {
+                heartbeat = setInterval(
+                    () => socket.send(JSON.stringify({ op: 3 })),
+                    message.d.heartbeat_interval,
+                )
+                socket.send(
+                    JSON.stringify({
+                        op: 2,
+                        d: { subscribe_to_id: discordUserId },
+                    }),
+                )
+            } else if (message.op === 0) {
+                failures = 0
+                onData(message.d)
+            }
+        }
+
+        socket.onclose = () => {
+            clearInterval(heartbeat)
+            if (closed) return
+            retry = setTimeout(open, Math.min(1000 * 2 ** failures++, 30000))
+        }
+    }
+
+    open()
+
+    return () => {
+        closed = true
+        clearInterval(heartbeat)
+        clearTimeout(retry)
+        ws?.close()
+    }
+}
+
 async function fetchDecorUrl(lanyard: LanyardData | null) {
     const asset = lanyard?.discord_user?.avatar_decoration_data?.asset
     if (asset) {
@@ -85,12 +133,33 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
             if (!cancelled) setProfile((prev) => ({ ...prev, ...patch }))
         }
 
+        let live = false
+        let decorAsset: string | null | undefined = null
+
+        const refreshDecor = async (lanyard: LanyardData | null) => {
+            decorAsset = lanyard?.discord_user?.avatar_decoration_data?.asset
+            update({ decorUrl: await fetchDecorUrl(lanyard) })
+        }
+
         fetchLanyard()
             .then(async (lanyard) => {
+                if (live) return
                 update({ lanyard })
-                update({ decorUrl: await fetchDecorUrl(lanyard) })
+                await refreshDecor(lanyard)
             })
             .catch((e) => console.error("Error fetching user data:", e))
+
+        const disconnect = connectLanyard((lanyard) => {
+            live = true
+            update({ lanyard })
+
+            if (
+                lanyard.discord_user?.avatar_decoration_data?.asset !==
+                decorAsset
+            ) {
+                refreshDecor(lanyard)
+            }
+        })
 
         fetchBadges()
             .then((badges) => update({ badges }))
@@ -100,6 +169,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
         return () => {
             cancelled = true
+            disconnect()
         }
     }, [])
 
