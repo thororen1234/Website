@@ -36,6 +36,8 @@ export const steamId = "76561198278966555"
 export const mcUsername = "thororen"
 export const mcUuid = "64acee6ee5e14ba881146464cca7989c"
 
+export const liveRefreshSeconds = 15
+
 export const bio =
     "Hi! I'm Thor! I'm a software developer from the United States of America with experience in languages such as TypeScript, JavaScript, Python, and Go."
 

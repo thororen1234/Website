@@ -1,4 +1,4 @@
-import { steamId } from "@/consts"
+import { liveRefreshSeconds, steamId } from "@/consts"
 import { parseSteamProfile, type SteamStatus } from "@/lib/steam-parse"
 
 export async function getSteamStatus(): Promise<SteamStatus | null> {
@@ -10,7 +10,7 @@ export async function getSteamStatus(): Promise<SteamStatus | null> {
 
     try {
         const res = await fetch(`https://steamcommunity.com/${path}/?xml=1`, {
-            next: { revalidate: 60 },
+            next: { revalidate: liveRefreshSeconds },
             signal: AbortSignal.timeout(5000),
         })
         if (!res.ok) throw new Error(`Steam responded ${res.status}`)

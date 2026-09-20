@@ -1,4 +1,4 @@
-import { lastfmApiKey, lastfmUser } from "@/consts"
+import { lastfmApiKey, lastfmUser, liveRefreshSeconds } from "@/consts"
 import {
     collapseRepeats,
     parseRecentTracks,
@@ -22,7 +22,7 @@ export async function getRecentTracks(limit = 6): Promise<Track[] | null> {
         const res = await fetch(
             `https://ws.audioscrobbler.com/2.0/?${params}`,
             {
-                next: { revalidate: 60 },
+                next: { revalidate: liveRefreshSeconds },
                 signal: AbortSignal.timeout(5000),
             },
         )

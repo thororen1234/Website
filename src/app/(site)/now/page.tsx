@@ -7,9 +7,11 @@ import CodingSection from "@/components/Widgets/CodingSection"
 import ListeningSection from "@/components/Widgets/ListeningSection"
 import SteamSection from "@/components/Widgets/SteamSection"
 import HypixelSection from "@/components/Widgets/HypixelSection"
+import LiveRefresh from "@/components/Widgets/LiveRefresh"
 import WatchingSection from "@/components/Widgets/WatchingSection"
+import { liveRefreshSeconds } from "@/consts"
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 
 export const metadata = createMetadata({
     title: "Now",
@@ -22,6 +24,7 @@ export default function Now() {
     return (
         <>
             <DiscordEmbed page="now" />
+            <LiveRefresh seconds={liveRefreshSeconds} />
 
             <div className="grid items-start gap-8 lg:grid-cols-2">
                 <div className="flex flex-col gap-8 empty:hidden">

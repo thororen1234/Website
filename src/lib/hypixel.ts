@@ -1,4 +1,4 @@
-import { mcUsername, mcUuid } from "@/consts"
+import { liveRefreshSeconds, mcUsername, mcUuid } from "@/consts"
 
 const GAME_NAMES: Record<string, string> = {
     ARCADE: "Arcade Games",
@@ -89,15 +89,19 @@ export async function getHypixelStatus(): Promise<HypixelStatus | null> {
 
     try {
         const params = new URLSearchParams({ uuid })
-        const options = {
+        const options = (revalidate: number) => ({
             headers: { "API-Key": apiKey },
             cache: "force-cache" as const,
-            next: { revalidate: 3600 },
+            next: { revalidate },
             signal: AbortSignal.timeout(8000),
-        }
+        })
+        // Online state changes constantly, the name and rank almost never do
         const [statusResponse, playerResponse] = await Promise.all([
-            fetch(`https://api.hypixel.net/v2/status?${params}`, options),
-            fetch(`https://api.hypixel.net/v2/player?${params}`, options),
+            fetch(
+                `https://api.hypixel.net/v2/status?${params}`,
+                options(liveRefreshSeconds),
+            ),
+            fetch(`https://api.hypixel.net/v2/player?${params}`, options(3600)),
         ])
         if (!statusResponse.ok || !playerResponse.ok) {
             throw new Error(
