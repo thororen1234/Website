@@ -1,4 +1,5 @@
-import { miscPages, projects, siteUrl, socials } from "@/consts"
+import { discordUserId, miscPages, projects, siteUrl, socials } from "@/consts"
+import { createCache } from "@/lib/daily-cache"
 import { getProject, isActive, yearRange } from "@/lib/projects"
 import { excerpt } from "@/lib/text"
 import type { MiscPage, Project } from "@/types"
@@ -9,6 +10,11 @@ const SOCIALS_BLACKLIST = ["donate", "discord"]
 interface Link {
     label: string
     url: string
+}
+
+interface EmbedImage {
+    url: string
+    description: string
 }
 
 const linkRows = (links: Link[]) =>
@@ -22,13 +28,37 @@ const linkRows = (links: Link[]) =>
         })),
     }))
 
-const AVATAR = { url: `${siteUrl}/assets/profile`, description: "My avatar" }
-const FAVICON = {
+async function loadAvatarHash(userId: string) {
+    const res = await fetch(`https://lanyard.equicord.org/v1/users/${userId}`, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(3000),
+    })
+    if (!res.ok) throw new Error(`Lanyard responded ${res.status}`)
+
+    const json = await res.json()
+    return (json?.data?.discord_user?.avatar as string | undefined) ?? null
+}
+
+const getAvatarHash = createCache(loadAvatarHash, {
+    ttl: 1000 * 60 * 5,
+    retryAfter: 1000 * 30,
+})
+
+async function getAvatar(): Promise<EmbedImage> {
+    const hash = await getAvatarHash(discordUserId)
+
+    return {
+        url: `${siteUrl}/assets/profile${hash ? `?v=${hash}` : ""}`,
+        description: "My avatar",
+    }
+}
+
+const FAVICON: EmbedImage = {
     url: `${siteUrl}/assets/favicon.png`,
     description: "Site icon",
 }
 
-const header = (content: string, icon = AVATAR) => ({
+const header = (content: string, icon: EmbedImage) => ({
     type: 9,
     components: [{ type: 10, content }],
     accessory: {
@@ -38,7 +68,7 @@ const header = (content: string, icon = AVATAR) => ({
     },
 })
 
-export function siteEmbed() {
+export function siteEmbed(avatar: EmbedImage) {
     const currentProjects = projects.filter((p) => !p.end).slice(0, 2)
 
     return {
@@ -47,6 +77,7 @@ export function siteEmbed() {
         components: [
             header(
                 "# thororen\nSoftware developer from the United States with experience in TypeScript, JavaScript, Python, and Go.",
+                avatar,
             ),
             { type: 14 },
             {
@@ -68,7 +99,7 @@ export function siteEmbed() {
     }
 }
 
-export function projectEmbed(project: Project) {
+export function projectEmbed(project: Project, avatar: EmbedImage) {
     const { slug, title, description, details, icon, url, github } = project
 
     const about = excerpt([description, ...(details ?? [])].join(" "), 280)
@@ -87,7 +118,7 @@ export function projectEmbed(project: Project) {
                 `# ${title}\n${about}\n-# ${status}`,
                 icon
                     ? { url: `${siteUrl}${icon}`, description: `${title} icon` }
-                    : undefined,
+                    : avatar,
             ),
             { type: 14, spacing: 1 },
             ...linkRows(links),
@@ -98,7 +129,7 @@ export function projectEmbed(project: Project) {
 export function pageEmbed(
     title: string,
     description: string,
-    icon?: typeof AVATAR,
+    icon: EmbedImage,
 ) {
     return {
         type: 17,
@@ -124,7 +155,7 @@ export function miscEmbed(page: MiscPage) {
 
 const PAGE_INFO: Record<
     string,
-    { title: string; description: string; icon?: typeof AVATAR }
+    { title: string; description: string; icon?: EmbedImage }
 > = {
     projects: {
         title: "Projects",
@@ -144,13 +175,14 @@ const PAGE_INFO: Record<
     },
 }
 
-export function getEmbed(params: URLSearchParams) {
+export async function getEmbed(params: URLSearchParams) {
     const page = params.get("page")
     const slug = params.get("slug")
+    const avatar = await getAvatar()
 
     if (page === "project" && slug) {
         const project = getProject(slug)
-        return project ? projectEmbed(project) : null
+        return project ? projectEmbed(project, avatar) : null
     }
 
     if (page === "tool" && slug) {
@@ -162,6 +194,6 @@ export function getEmbed(params: URLSearchParams) {
 
     const info = page ? PAGE_INFO[page] : undefined
     return info
-        ? pageEmbed(info.title, info.description, info.icon)
-        : siteEmbed()
+        ? pageEmbed(info.title, info.description, info.icon ?? avatar)
+        : siteEmbed(avatar)
 }
