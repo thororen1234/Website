@@ -2,8 +2,7 @@ import { TriangleAlert, X } from "lucide-react"
 import type { ReactNode, RefObject } from "react"
 import { fieldClass, labelClass } from "@/components/Tools/fields"
 import { useExplorerSettings, useExplorerStore } from "../store"
-import { EDITOR_THEMES } from "../themes"
-import { iconButtonClass, mutedTextClass } from "./styles"
+import { editorThemes } from "../themes"
 
 function Warning({ text, children }: { text: string; children: ReactNode }) {
     return (
@@ -41,7 +40,7 @@ export default function SettingsDialog({
                         type="button"
                         aria-label="Close settings"
                         onClick={() => ref.current?.close()}
-                        className={iconButtonClass}
+                        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-zinc-300 bg-zinc-100 text-neutral-600 transition-colors hover:bg-zinc-200 hover:text-rose-500 active:scale-[.97] dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300 dark:hover:bg-zinc-800"
                     >
                         <X size={16} />
                     </button>
@@ -61,7 +60,7 @@ export default function SettingsDialog({
                         />
                         Open modules in a new tab
                     </label>
-                    <p className={mutedTextClass}>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         Go to definition (ctrl-click) into another module opens
                         it in a new tab instead of this one.
                     </p>
@@ -81,13 +80,13 @@ export default function SettingsDialog({
                         }
                         className={fieldClass}
                     >
-                        {EDITOR_THEMES.map(({ id, label }) => (
+                        {editorThemes.map(({ id, name }) => (
                             <option key={id} value={id}>
-                                {label}
+                                {name}
                             </option>
                         ))}
                     </select>
-                    <p className={mutedTextClass}>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         Only changes the code editor, not the rest of the page.
                     </p>
                 </div>
@@ -108,13 +107,8 @@ export default function SettingsDialog({
                         step={1}
                         value={depth}
                         onChange={(e) => {
-                            if (
-                                useExplorerStore.getState().activePanel ===
-                                "graph"
-                            ) {
-                                useExplorerStore.setState({
-                                    activePanel: "code",
-                                })
+                            if (useExplorerStore.getState().panel === "graph") {
+                                useExplorerStore.setState({ panel: "code" })
                             }
                             useExplorerSettings.setState({
                                 graphDepth: Number(e.target.value),

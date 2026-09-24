@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from "react"
 import { monaco } from "../monaco"
-import type { ViewSearch } from "../routes"
+import type { CodeSelection } from "../routes"
 import {
     getModuleModel,
-    parseModuleURI,
+    parseModuleUri,
     placeholderModel,
     useExplorerSettings,
     useExplorerStore,
 } from "../store"
-import type { TModuleId } from "../types"
 
 type Editor = ReturnType<typeof monaco.editor.create>
 
-function applySearch(editor: Editor, { sl, sc, el, ec }: ViewSearch) {
+function applySearch(editor: Editor, { sl, sc, el, ec }: CodeSelection) {
     if (sl == null || sc == null) return
 
     if (el == null || ec == null || (sl === el && sc === ec)) {
@@ -31,11 +30,11 @@ function applySearch(editor: Editor, { sl, sc, el, ec }: ViewSearch) {
     }
 }
 
-export default function CodeView({ search }: { search: ViewSearch }) {
+export default function CodeView({ search }: { search: CodeSelection }) {
     const containerRef = useRef<HTMLDivElement>(null)
     const [editor, setEditor] = useState<Editor | null>(null)
     const moduleId = useExplorerStore((s) => s.selectedModule)
-    const buildService = useExplorerStore((s) => s.buildService)
+    const bundleApi = useExplorerStore((s) => s.bundleApi)
     const theme = useExplorerSettings((s) => s.editorTheme)
 
     useEffect(() => {
@@ -43,7 +42,6 @@ export default function CodeView({ search }: { search: ViewSearch }) {
             model: placeholderModel("// Select a module"),
             readOnly: true,
             automaticLayout: true,
-            theme,
             fontSize: 13,
             minimap: { enabled: true },
             scrollBeyondLastLine: false,
@@ -51,7 +49,6 @@ export default function CodeView({ search }: { search: ViewSearch }) {
         setEditor(created)
 
         return () => created.dispose()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -61,7 +58,7 @@ export default function CodeView({ search }: { search: ViewSearch }) {
     const { sl, sc, el, ec } = search
 
     useEffect(() => {
-        if (!editor || !buildService) return
+        if (!editor || !bundleApi) return
 
         if (moduleId == null) {
             editor.setModel(placeholderModel("// Select a module"))
@@ -71,11 +68,11 @@ export default function CodeView({ search }: { search: ViewSearch }) {
         let cancelled = false
 
         const shown = editor.getModel()
-        if (!shown || parseModuleURI(shown.uri)?.moduleId !== moduleId) {
+        if (!shown || parseModuleUri(shown.uri)?.moduleId !== moduleId) {
             editor.setModel(placeholderModel(`// Loading module ${moduleId}…`))
         }
 
-        getModuleModel(moduleId as TModuleId).then(
+        getModuleModel(moduleId).then(
             (model) => {
                 if (cancelled) return
                 if (editor.getModel() !== model) editor.setModel(model)
@@ -95,7 +92,7 @@ export default function CodeView({ search }: { search: ViewSearch }) {
         return () => {
             cancelled = true
         }
-    }, [editor, buildService, moduleId, sl, sc, el, ec])
+    }, [editor, bundleApi, moduleId, sl, sc, el, ec])
 
     return <div ref={containerRef} className="size-full" />
 }

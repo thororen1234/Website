@@ -6,22 +6,20 @@ import {
     ReactFlowProvider,
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
+import { useCallback } from "react"
 import { useExplorerSettings, useExplorerStore } from "../store"
-import type { TModuleId } from "../types"
 import { useAsync } from "./useAsync"
 
 export default function GraphView({ dark }: { dark: boolean }) {
     const moduleId = useExplorerStore((s) => s.selectedModule)
-    const buildService = useExplorerStore((s) => s.buildService)
+    const bundleApi = useExplorerStore((s) => s.bundleApi)
     const depth = useExplorerSettings((s) => s.graphDepth)
 
-    const graph = useAsync(
-        moduleId != null && buildService
-            ? () =>
-                  buildService.generateModuleGraph(moduleId as TModuleId, depth)
-            : null,
-        [moduleId, buildService, depth],
+    const loadGraph = useCallback(
+        () => bundleApi!.getModuleGraph(moduleId!, depth),
+        [moduleId, bundleApi, depth],
     )
+    const graph = useAsync(moduleId != null && bundleApi ? loadGraph : null)
 
     if (moduleId == null || graph.status !== "success") {
         return (
@@ -42,12 +40,13 @@ export default function GraphView({ dark }: { dark: boolean }) {
                     node.id === `${moduleId}`
                         ? {
                               ...node,
+                              data: { label: node.id },
                               style: {
                                   borderColor: "#f43f5e",
                                   color: "#f43f5e",
                               },
                           }
-                        : node,
+                        : { ...node, data: { label: node.id } },
                 )}
                 edges={graph.data.edges}
                 colorMode={dark ? "dark" : "light"}
@@ -57,7 +56,7 @@ export default function GraphView({ dark }: { dark: boolean }) {
                 minZoom={0}
                 fitView
                 onNodeClick={(_e, node) => {
-                    const id = Number(node.id) as TModuleId
+                    const id = Number(node.id)
                     if (id !== moduleId)
                         useExplorerStore.getState().navigate(id)
                 }}

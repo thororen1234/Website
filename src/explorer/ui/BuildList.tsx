@@ -2,13 +2,12 @@
 
 import { ArrowRight, LoaderCircle } from "lucide-react"
 import Link from "next/link"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { buttonClass } from "@/components/Tools/fields"
 import { getBuilds } from "../api"
-import { viewHref } from "../routes"
-import type { BuildMeta, ReleaseChannel } from "../types"
+import { moduleHref } from "../routes"
+import type { Build, ReleaseChannel } from "../types"
 import DownloadAll from "./DownloadAll"
-import { mutedTextClass, tabClass, tabGroupClass } from "./styles"
 import { errorMessage, useAsync } from "./useAsync"
 
 const dateFormat = new Intl.DateTimeFormat(undefined, {
@@ -17,7 +16,6 @@ const dateFormat = new Intl.DateTimeFormat(undefined, {
 })
 
 const INITIAL_COUNT = 24
-
 type Filter = "all" | ReleaseChannel
 
 const FILTERS: { value: Filter; label: string }[] = [
@@ -35,7 +33,8 @@ const channelBadgeClass: Record<ReleaseChannel, string> = {
 }
 
 export default function BuildList() {
-    const builds = useAsync(() => getBuilds(), [])
+    const load = useCallback(() => getBuilds(), [])
+    const builds = useAsync(load)
     const [showAll, setShowAll] = useState(false)
     const [filter, setFilter] = useState<Filter>("all")
 
@@ -43,9 +42,9 @@ export default function BuildList() {
         () =>
             builds.status === "success"
                 ? builds.data.toSorted((a, b) =>
-                      a.first_seen === b.first_seen
+                      a.firstSeen === b.firstSeen
                           ? 0
-                          : b.first_seen > a.first_seen
+                          : b.firstSeen > a.firstSeen
                             ? 1
                             : -1,
                   )
@@ -63,7 +62,7 @@ export default function BuildList() {
             for (const key of keys) {
                 if (!seen.has(key)) {
                     seen.add(key)
-                    hashes.add(build.build_hash)
+                    hashes.add(build.hash)
                 }
             }
         }
@@ -80,7 +79,7 @@ export default function BuildList() {
 
     if (builds.status !== "success") {
         return (
-            <p className={`flex items-center gap-2 ${mutedTextClass}`}>
+            <p className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
                 <LoaderCircle size={16} className="animate-spin" /> Loading
                 builds…
             </p>
@@ -88,7 +87,11 @@ export default function BuildList() {
     }
 
     if (!sorted.length) {
-        return <p className={mutedTextClass}>No builds available right now.</p>
+        return (
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                No builds available right now.
+            </p>
+        )
     }
 
     const filtered =
@@ -103,7 +106,7 @@ export default function BuildList() {
                 <div
                     role="group"
                     aria-label="Release channel"
-                    className={`inline-flex w-fit ${tabGroupClass}`}
+                    className="inline-flex w-fit rounded-xl bg-zinc-200 p-1 dark:bg-zinc-800"
                 >
                     {FILTERS.map(({ value, label }) => (
                         <button
@@ -111,7 +114,11 @@ export default function BuildList() {
                             type="button"
                             aria-pressed={filter === value}
                             onClick={() => setFilter(value)}
-                            className={tabClass(filter === value)}
+                            className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                                filter === value
+                                    ? "bg-zinc-100 text-neutral-900 shadow-sm dark:bg-zinc-700 dark:text-neutral-100"
+                                    : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+                            }`}
                         >
                             {label}
                         </button>
@@ -124,16 +131,18 @@ export default function BuildList() {
             {filtered.length ? (
                 <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {visible.map((build) => (
-                        <li key={build.build_hash}>
+                        <li key={build.hash}>
                             <BuildCard
                                 build={build}
-                                latest={latest.has(build.build_hash)}
+                                latest={latest.has(build.hash)}
                             />
                         </li>
                     ))}
                 </ul>
             ) : (
-                <p className={mutedTextClass}>No {filter} builds right now.</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    No {filter} builds right now.
+                </p>
             )}
 
             {!showAll && filtered.length > INITIAL_COUNT && (
@@ -149,16 +158,16 @@ export default function BuildList() {
     )
 }
 
-function BuildCard({ build, latest }: { build: BuildMeta; latest: boolean }) {
+function BuildCard({ build, latest }: { build: Build; latest: boolean }) {
     return (
         <Link
-            href={viewHref(build.build_hash)}
+            href={moduleHref(build.hash)}
             prefetch={false}
             className="group flex h-full flex-col gap-1.5 rounded-2xl border border-zinc-300 bg-zinc-100 px-5 py-4 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
         >
             <div className="flex items-center gap-2">
                 <span className="text-lg font-semibold text-neutral-800 tabular-nums dark:text-neutral-200">
-                    {build.build_number}
+                    {build.number}
                 </span>
                 {build.channels.map((channel) => (
                     <span
@@ -181,13 +190,13 @@ function BuildCard({ build, latest }: { build: BuildMeta; latest: boolean }) {
                 />
             </div>
             <span className="text-sm text-neutral-600 tabular-nums dark:text-neutral-400">
-                {dateFormat.format(new Date(Number(build.first_seen)))}
+                {dateFormat.format(new Date(build.firstSeen))}
             </span>
             <span
                 className="truncate font-mono text-xs text-neutral-500"
-                title={build.build_hash}
+                title={build.hash}
             >
-                {build.build_hash}
+                {build.hash}
             </span>
         </Link>
     )

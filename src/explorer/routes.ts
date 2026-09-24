@@ -1,46 +1,48 @@
-export interface ViewSearch {
+export interface CodeSelection {
     sl?: number
     sc?: number
     el?: number
     ec?: number
 }
 
-const SEARCH_KEYS = ["sl", "sc", "el", "ec"] as const
+const selectionKeys = ["sl", "sc", "el", "ec"] as const
 
-export function viewHref(
+export function moduleHref(
     buildHash: string,
     moduleId?: number | null,
-    search?: ViewSearch,
+    selection: CodeSelection = {},
 ) {
-    let href = `/discord/modules/${encodeURIComponent(buildHash)}`
-
-    if (moduleId != null) href += `/${moduleId}`
+    const path = `/discord/modules/${encodeURIComponent(buildHash)}${
+        moduleId == null ? "" : `/${moduleId}`
+    }`
 
     const params = new URLSearchParams()
-    for (const key of SEARCH_KEYS) {
-        const value = search?.[key]
-        if (value != null) params.set(key, String(value))
-    }
-
-    const query = params.toString()
-    return query ? `${href}?${query}` : href
-}
-
-export function parseViewSearch(params: URLSearchParams): ViewSearch {
-    const search: ViewSearch = {}
-
-    for (const key of SEARCH_KEYS) {
-        const value = Number(params.get(key))
-        if (params.has(key) && Number.isInteger(value) && value > 0) {
-            search[key] = value
+    for (const key of selectionKeys) {
+        const value = selection[key]
+        if (Number.isInteger(value) && value! > 0) {
+            params.set(key, String(value))
         }
     }
 
-    return search
+    const query = params.toString()
+    return query ? `${path}?${query}` : path
 }
 
-export function parseModuleId(raw: string | string[] | undefined) {
-    const value = Array.isArray(raw) ? raw[0] : raw
-    if (value == null || !/^\d+$/.test(value)) return null
-    return Number(value)
+export function readSelection(params: URLSearchParams): CodeSelection {
+    const selection: CodeSelection = {}
+
+    for (const key of selectionKeys) {
+        const value = Number(params.get(key))
+        if (Number.isInteger(value) && value > 0) selection[key] = value
+    }
+
+    return selection
+}
+
+export function readModuleId(moduleId: string[] | undefined) {
+    const value = moduleId?.[0]
+    if (!value || !/^\d+$/.test(value)) return null
+
+    const id = Number(value)
+    return Number.isSafeInteger(id) && id >= 0 ? id : null
 }

@@ -1,7 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from "react"
-import { hiddenScrollbarClass } from "./styles"
-
-interface Props {
+interface VirtualListProps {
     count: number
     rowHeight: number
     overscan?: number
@@ -17,57 +15,71 @@ export default function VirtualList({
     scrollToIndex,
     renderRow,
     className = "",
-}: Props) {
-    const ref = useRef<HTMLDivElement>(null)
+}: VirtualListProps) {
+    const containerRef = useRef<HTMLDivElement>(null)
     const [scrollTop, setScrollTop] = useState(0)
-    const [height, setHeight] = useState(0)
+    const [viewportHeight, setViewportHeight] = useState(0)
 
     useEffect(() => {
-        const el = ref.current
-        if (!el) return
+        const container = containerRef.current
+        if (!container) return
 
-        const observer = new ResizeObserver(() => setHeight(el.clientHeight))
-        observer.observe(el)
+        const updateHeight = () => setViewportHeight(container.clientHeight)
+        const observer = new ResizeObserver(updateHeight)
+
+        updateHeight()
+        observer.observe(container)
         return () => observer.disconnect()
     }, [])
 
     useEffect(() => {
-        const el = ref.current
-        if (!el || scrollToIndex == null || scrollToIndex < 0) return
-
-        const top = scrollToIndex * rowHeight
+        const container = containerRef.current
         if (
-            top < el.scrollTop ||
-            top + rowHeight > el.scrollTop + el.clientHeight
+            !container ||
+            scrollToIndex == null ||
+            scrollToIndex < 0 ||
+            scrollToIndex >= count
         ) {
-            el.scrollTop = top - el.clientHeight / 2 + rowHeight / 2
+            return
+        }
+
+        const rowTop = scrollToIndex * rowHeight
+        if (
+            rowTop < container.scrollTop ||
+            rowTop + rowHeight > container.scrollTop + container.clientHeight
+        ) {
+            container.scrollTop = Math.max(
+                0,
+                rowTop - container.clientHeight / 2 + rowHeight / 2,
+            )
         }
     }, [scrollToIndex, rowHeight, count])
 
-    const first = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan)
-    const last = Math.min(
+    const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan)
+    const endIndex = Math.min(
         count,
-        Math.ceil((scrollTop + height) / rowHeight) + overscan,
+        Math.ceil((scrollTop + viewportHeight) / rowHeight) + overscan,
     )
 
-    const rows = []
-    for (let i = first; i < last; i++) {
-        rows.push(
+    const rows = Array.from({ length: endIndex - startIndex }, (_, offset) => {
+        const index = startIndex + offset
+
+        return (
             <div
-                key={i}
+                key={index}
                 className="absolute inset-x-0"
-                style={{ top: i * rowHeight, height: rowHeight }}
+                style={{ top: index * rowHeight, height: rowHeight }}
             >
-                {renderRow(i)}
-            </div>,
+                {renderRow(index)}
+            </div>
         )
-    }
+    })
 
     return (
         <div
-            ref={ref}
-            onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
-            className={`min-h-0 overflow-y-auto ${hiddenScrollbarClass} ${className}`}
+            ref={containerRef}
+            onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
+            className={`min-h-0 scrollbar-none overflow-y-auto [&::-webkit-scrollbar]:hidden ${className}`}
         >
             <div className="relative" style={{ height: count * rowHeight }}>
                 {rows}

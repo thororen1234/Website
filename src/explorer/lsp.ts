@@ -1,226 +1,155 @@
 import { UPSTREAM_ISSUE_URL } from "./config"
-import { monaco, type Monaco } from "./monaco"
-import { viewHref, type ViewSearch } from "./routes"
+import { monaco } from "./monaco"
+import { moduleHref } from "./routes"
 import {
     getModuleModel,
-    parseModuleURI,
+    parseModuleUri,
     useExplorerSettings,
     useExplorerStore,
 } from "./store"
-import type { IPosition, IRange, ModuleLocation, TModuleId } from "./types"
+import type { ModuleLocation } from "./types"
 
-type TextModel = ReturnType<Monaco["editor"]["createModel"]>
-type Location = { uri: TextModel["uri"]; range: IRange }
+const COPY_COMMAND = "explorer.copyIntlFind"
 
-const COPY_COMMAND = "webpackI18nHover.copy"
+let intlKeys: Record<string, string> | undefined
 
-function isWebpackModule(text: string) {
-    return (
-        text.startsWith("// Webpack Module ") ||
-        text.substring(0, 100).includes("//OPEN FULL MODULE:")
-    )
+async function unhashIntlKey(key: string) {
+    intlKeys ??= (await import("./lsp/intl-keys.json")).default as Record<
+        string,
+        string
+    >
+    return intlKeys[key]
 }
 
-function currentModule(model: TextModel) {
-    if (!isWebpackModule(model.getValue())) return undefined
+function moduleFor(model: monaco.editor.ITextModel) {
+    const { buildHash, bundleApi } = useExplorerStore.getState()
+    const target = parseModuleUri(model.uri)
 
-    const parsed = parseModuleURI(model.uri)
-    const { buildHash, buildService } = useExplorerStore.getState()
-
-    if (!parsed || !buildService || parsed.buildHash !== buildHash) {
-        return undefined
-    }
-
-    return { moduleId: parsed.moduleId, buildService }
+    if (!bundleApi || !target || target.buildHash !== buildHash) return null
+    return { bundleApi, moduleId: target.moduleId }
 }
 
-let intlKeys: Promise<Record<string, string>> | null = null
-
-async function tryMapIntlKey(hashedKey: string) {
-    intlKeys ??= import("./lsp/intl-keys.json").then(
-        (mod) => mod.default as Record<string, string>,
-    )
-    const keys = await intlKeys
-    return Object.hasOwn(keys, hashedKey) ? keys[hashedKey] : null
-}
-
-async function toLocations(defs: ModuleLocation[]): Promise<Location[]> {
+async function toLocations(
+    locations: ModuleLocation[],
+): Promise<monaco.languages.Location[]> {
     return Promise.all(
-        defs.map(async ({ id, range }) => ({
-            uri: (await getModuleModel(id)).uri,
+        locations.map(async ({ moduleId, range }) => ({
+            uri: (await getModuleModel(moduleId)).uri,
             range,
         })),
     )
 }
 
-function positionToSearch(
-    selectionOrPosition: IRange | IPosition | undefined,
-): ViewSearch | undefined {
-    if (!selectionOrPosition) return undefined
+let registered = false
 
-    if ("startLineNumber" in selectionOrPosition) {
-        return {
-            sl: selectionOrPosition.startLineNumber,
-            sc: selectionOrPosition.startColumn,
-            el: selectionOrPosition.endLineNumber,
-            ec: selectionOrPosition.endColumn,
-        }
-    }
+export function registerLanguageFeatures() {
+    if (registered) return
+    registered = true
 
-    return {
-        sl: selectionOrPosition.lineNumber,
-        sc: selectionOrPosition.column,
-        el: selectionOrPosition.lineNumber,
-        ec: selectionOrPosition.column,
-    }
-}
-
-function register() {
     monaco.languages.registerHoverProvider("javascript", {
         async provideHover(model, position) {
-            try {
-                const current = currentModule(model)
-                if (!current) return
+            const module = moduleFor(model)
+            if (!module) return
 
-                const hover = await current.buildService.generateHover(
-                    current.moduleId,
-                    {
-                        lineNumber: position.lineNumber,
-                        column: position.column,
-                    },
-                )
-                if (!hover) return
+            const hover = await module.bundleApi.getHover(
+                module.moduleId,
+                position,
+            )
+            if (!hover) return
 
-                if (hover.i18nKey) {
-                    const unhashed = await tryMapIntlKey(hover.i18nKey)
-                    const args = encodeURIComponent(
-                        JSON.stringify([
-                            { hashedKey: hover.i18nKey, unhashed },
-                        ]),
-                    )
-
-                    return {
-                        range: hover.range,
-                        contents: [
-                            {
-                                value:
-                                    unhashed ??
-                                    `No mapping found. If you find one, please [open an issue](${UPSTREAM_ISSUE_URL}) so it can be added!`,
-                            },
-                            {
-                                value: `$(copy) [Copy As Find](command:${COPY_COMMAND}?${args})`,
-                                supportThemeIcons: true,
-                                isTrusted: { enabledCommands: [COPY_COMMAND] },
-                            },
-                        ],
-                    }
-                }
-
-                if (!hover.content) return
+            if (hover.i18nKey) {
+                const name = await unhashIntlKey(hover.i18nKey)
+                const find = name
+                    ? `#{intl::${name}}`
+                    : `#{intl::${hover.i18nKey}::raw}`
+                const args = encodeURIComponent(JSON.stringify([find]))
 
                 return {
                     range: hover.range,
                     contents: [
                         {
-                            value: hover.content,
-                            isTrusted: true,
+                            value:
+                                name ??
+                                `No mapping found. If you find one, please [open an issue](${UPSTREAM_ISSUE_URL}) so it can be added!`,
+                        },
+                        {
+                            value: `$(copy) [Copy As Find](command:${COPY_COMMAND}?${args})`,
                             supportThemeIcons: true,
+                            isTrusted: { enabledCommands: [COPY_COMMAND] },
                         },
                     ],
                 }
-            } catch (e) {
-                console.error(e)
+            }
+
+            if (!hover.content) return
+
+            return {
+                range: hover.range,
+                contents: [
+                    {
+                        value: hover.content,
+                        isTrusted: true,
+                        supportThemeIcons: true,
+                    },
+                ],
             }
         },
     })
 
-    monaco.editor.registerCommand(
-        COPY_COMMAND,
-        (
-            _accessor,
-            {
-                hashedKey,
-                unhashed,
-            }: { hashedKey: string; unhashed: string | null },
-        ) => {
-            void navigator.clipboard.writeText(
-                unhashed
-                    ? `#{intl::${unhashed}}`
-                    : `#{intl::${hashedKey}::raw}`,
-            )
-        },
-    )
+    monaco.editor.registerCommand(COPY_COMMAND, (_, text: string) => {
+        void navigator.clipboard.writeText(text)
+    })
 
     monaco.languages.registerDefinitionProvider("javascript", {
         async provideDefinition(model, position) {
-            try {
-                const current = currentModule(model)
-                if (!current) return
-
-                return toLocations(
-                    await current.buildService.generateDefinitions(
-                        current.moduleId,
-                        {
-                            lineNumber: position.lineNumber,
-                            column: position.column,
-                        },
-                    ),
-                )
-            } catch (e) {
-                console.error(e)
-            }
+            const module = moduleFor(model)
+            if (!module) return
+            return toLocations(
+                await module.bundleApi.getDefinitions(
+                    module.moduleId,
+                    position,
+                ),
+            )
         },
     })
 
     monaco.languages.registerReferenceProvider("javascript", {
         async provideReferences(model, position) {
-            try {
-                const current = currentModule(model)
-                if (!current) return
-
-                return toLocations(
-                    await current.buildService.generateReferences(
-                        current.moduleId,
-                        {
-                            lineNumber: position.lineNumber,
-                            column: position.column,
-                        },
-                    ),
-                )
-            } catch (e) {
-                console.error(e)
-            }
+            const module = moduleFor(model)
+            if (!module) return
+            return toLocations(
+                await module.bundleApi.getReferences(module.moduleId, position),
+            )
         },
     })
 
     monaco.editor.registerEditorOpener({
-        openCodeEditor(_source, resource, selectionOrPosition) {
-            const parsed = parseModuleURI(resource)
-            if (!parsed) return false
+        openCodeEditor(_, uri, selection) {
+            const target = parseModuleUri(uri)
+            if (!target) return false
 
-            const search = positionToSearch(selectionOrPosition)
+            const search =
+                selection &&
+                ("startLineNumber" in selection
+                    ? {
+                          sl: selection.startLineNumber,
+                          sc: selection.startColumn,
+                          el: selection.endLineNumber,
+                          ec: selection.endColumn,
+                      }
+                    : { sl: selection.lineNumber, sc: selection.column })
 
             if (useExplorerSettings.getState().openModulesInNewTab) {
                 window.open(
-                    viewHref(parsed.buildHash, parsed.moduleId, search),
+                    moduleHref(target.buildHash, target.moduleId, search),
                     "_blank",
                     "noopener,noreferrer",
                 )
             } else {
-                useExplorerStore
-                    .getState()
-                    .navigate(parsed.moduleId as TModuleId, search)
+                useExplorerStore.getState().navigate(target.moduleId, search)
             }
 
             return true
         },
     })
-}
-
-let registered = false
-
-export function registerLSPHandlers() {
-    if (registered) return
-    registered = true
-    register()
 }

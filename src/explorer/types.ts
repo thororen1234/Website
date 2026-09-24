@@ -1,64 +1,62 @@
-export type TBundleHash = string & { readonly __brand: "TBundleHash" }
-export type TModuleId = number & { readonly __brand: "TModuleId" }
+export type ReleaseChannel = "stable" | "canary"
 
-export interface IRange {
+export interface Build {
+    hash: string
+    number: number
+    firstSeen: number
+    channels: ReleaseChannel[]
+}
+
+export interface ModuleDeps {
+    syncUses: number[]
+    lazyUses: number[]
+}
+
+export interface ModulePosition {
+    lineNumber: number
+    column: number
+}
+
+export interface ModuleRange {
     startLineNumber: number
     startColumn: number
     endLineNumber: number
     endColumn: number
 }
 
-export interface IPosition {
-    lineNumber: number
-    column: number
-}
-
-export type ReleaseChannel = "stable" | "canary"
-
-export interface BuildMeta {
-    build_hash: string
-    build_number: number
-    entry_point: number | undefined
-    first_seen: bigint
-    channels: ReleaseChannel[]
-}
-
 export interface ModuleLocation {
-    range: IRange
-    id: TModuleId
+    moduleId: number
+    range: ModuleRange
 }
 
-export interface HoverInfo {
+export interface ModuleHover {
     content: string
-    range: IRange
+    range: ModuleRange
     i18nKey?: string
 }
 
-export interface BundleSearchResults {
+export interface SearchResults {
     moduleIds: Uint32Array
     rawIndices: Uint32Array
 }
 
-export interface ModuleDeps {
-    syncUses: TModuleId[]
-    lazyUses: TModuleId[]
+export interface SearchResult {
+    lineNumber: number
+    column: number
+    preview: string
 }
 
-export interface GraphNode {
-    id: string
-    data: { label: string }
-    position: { x: number; y: number }
-    width: number
-    height: number
+export interface SearchLocation {
+    lineNumber: number
+    column: number
 }
 
-export interface GraphEdge {
-    id: string
-    source: string
-    target: string
-}
-
-export interface GeneratedGraph {
-    nodes: GraphNode[]
-    edges: GraphEdge[]
+export interface ModuleGraph {
+    nodes: {
+        id: string
+        position: { x: number; y: number }
+        width: number
+        height: number
+    }[]
+    edges: { id: string; source: string; target: string }[]
 }

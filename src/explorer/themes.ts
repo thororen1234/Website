@@ -1,73 +1,19 @@
-import type { ThemeRegistration } from "shiki/core"
+import type { BundledTheme } from "shiki"
 
-type ThemeModule = Promise<{ default: ThemeRegistration }>
-
-interface EditorTheme {
-    id: string
-    label: string
-    load(): ThemeModule
-}
-
-export const EDITOR_THEMES: EditorTheme[] = [
-    {
-        id: "tokyo-night",
-        label: "Tokyo Night",
-        load: () => import("shiki/themes/tokyo-night.mjs"),
-    },
-    {
-        id: "rose-pine",
-        label: "Rosé Pine",
-        load: () => import("shiki/themes/rose-pine.mjs"),
-    },
-    {
-        id: "rose-pine-moon",
-        label: "Rosé Pine Moon",
-        load: () => import("shiki/themes/rose-pine-moon.mjs"),
-    },
-    {
-        id: "rose-pine-dawn",
-        label: "Rosé Pine Dawn",
-        load: () => import("shiki/themes/rose-pine-dawn.mjs"),
-    },
-    { id: "nord", label: "Nord", load: () => import("shiki/themes/nord.mjs") },
-    {
-        id: "catppuccin-mocha",
-        label: "Catppuccin Mocha",
-        load: () => import("shiki/themes/catppuccin-mocha.mjs"),
-    },
-    {
-        id: "catppuccin-macchiato",
-        label: "Catppuccin Macchiato",
-        load: () => import("shiki/themes/catppuccin-macchiato.mjs"),
-    },
-    {
-        id: "catppuccin-frappe",
-        label: "Catppuccin Frappé",
-        load: () => import("shiki/themes/catppuccin-frappe.mjs"),
-    },
-    {
-        id: "catppuccin-latte",
-        label: "Catppuccin Latte",
-        load: () => import("shiki/themes/catppuccin-latte.mjs"),
-    },
-    {
-        id: "dracula",
-        label: "Dracula",
-        load: () => import("shiki/themes/dracula.mjs"),
-    },
-    {
-        id: "gruvbox-dark-hard",
-        label: "Gruvbox",
-        load: () => import("shiki/themes/gruvbox-dark-hard.mjs"),
-    },
-    {
-        id: "github-light",
-        label: "GitHub Light",
-        load: () => import("shiki/themes/github-light.mjs"),
-    },
+export const editorThemes: { id: BundledTheme; name: string }[] = [
+    { id: "tokyo-night", name: "Tokyo Night" },
+    { id: "rose-pine", name: "Rosé Pine" },
+    { id: "rose-pine-moon", name: "Rosé Pine Moon" },
+    { id: "rose-pine-dawn", name: "Rosé Pine Dawn" },
+    { id: "nord", name: "Nord" },
+    { id: "catppuccin-mocha", name: "Catppuccin Mocha" },
+    { id: "catppuccin-macchiato", name: "Catppuccin Macchiato" },
+    { id: "catppuccin-frappe", name: "Catppuccin Frappé" },
+    { id: "catppuccin-latte", name: "Catppuccin Latte" },
+    { id: "dracula", name: "Dracula" },
+    { id: "gruvbox-dark-hard", name: "Gruvbox" },
+    { id: "github-light", name: "GitHub Light" },
 ]
 
-export const DEFAULT_EDITOR_THEME = "tokyo-night"
-
-export const isEditorTheme = (id: unknown): id is string =>
-    EDITOR_THEMES.some((theme) => theme.id === id)
+export const isEditorTheme = (theme: unknown): theme is BundledTheme =>
+    typeof theme === "string" && editorThemes.some(({ id }) => id === theme)

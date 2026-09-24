@@ -1,4 +1,4 @@
-import { type DependencyList, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 export type AsyncState<T> =
     | { status: "idle"; data?: undefined; error?: undefined }
@@ -6,14 +6,11 @@ export type AsyncState<T> =
     | { status: "success"; data: T; error?: undefined }
     | { status: "error"; data?: undefined; error: unknown }
 
-export function useAsync<T>(
-    fn: (() => Promise<T>) | null,
-    deps: DependencyList,
-): AsyncState<T> {
+export function useAsync<T>(load: (() => Promise<T>) | null): AsyncState<T> {
     const [state, setState] = useState<AsyncState<T>>({ status: "idle" })
 
     useEffect(() => {
-        if (!fn) {
+        if (!load) {
             setState({ status: "idle" })
             return
         }
@@ -21,7 +18,7 @@ export function useAsync<T>(
         let cancelled = false
         setState({ status: "pending" })
 
-        fn().then(
+        load().then(
             (data) => !cancelled && setState({ status: "success", data }),
             (error) => !cancelled && setState({ status: "error", error }),
         )
@@ -29,8 +26,7 @@ export function useAsync<T>(
         return () => {
             cancelled = true
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, deps)
+    }, [load])
 
     return state
 }

@@ -3,8 +3,7 @@ import { FileArchive, FolderDown, LoaderCircle, X } from "lucide-react"
 import { useRef, useState } from "react"
 import { buttonClass } from "@/components/Tools/fields"
 import { bundleArchiveUrl } from "../config"
-import type { BuildMeta } from "../types"
-import { mutedTextClass } from "./styles"
+import type { Build } from "../types"
 
 type DirectoryPicker = (options?: {
     id?: string
@@ -32,8 +31,8 @@ interface Progress {
     cancelled: boolean
 }
 
-const archiveName = (build: BuildMeta) =>
-    `${[...build.channels, build.build_number, build.build_hash].join("-")}.7z`
+const archiveName = (build: Build) =>
+    `${[...build.channels, build.number, build.hash].join("-")}.7z`
 
 const formatBytes = (bytes: number) =>
     bytes >= 1e9
@@ -51,7 +50,7 @@ async function fileExists(dir: FileSystemDirectoryHandle, name: string) {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-const pickers = () =>
+const getFilePickers = () =>
     window as {
         showDirectoryPicker?: DirectoryPicker
         showSaveFilePicker?: SavePicker
@@ -59,11 +58,11 @@ const pickers = () =>
 
 const actionClass = `flex w-fit items-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 ${buttonClass}`
 
-export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
+export default function DownloadAll({ builds }: { builds: Build[] }) {
     const [progress, setProgress] = useState<Progress | null>(null)
     const abortRef = useRef<AbortController | null>(null)
     const running = progress != null && !progress.finished
-    const canZip = typeof pickers().showSaveFilePicker === "function"
+    const canZip = typeof getFilePickers().showSaveFilePicker === "function"
 
     const update = (fn: (p: Progress) => Partial<Progress>) =>
         setProgress((p) => (p ? { ...p, ...fn(p) } : p))
@@ -76,13 +75,13 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
             },
         })
 
-    async function fetchArchive(build: BuildMeta, signal: AbortSignal) {
-        const res = await fetch(bundleArchiveUrl(build.build_hash), { signal })
+    async function fetchArchive(build: Build, signal: AbortSignal) {
+        const res = await fetch(bundleArchiveUrl(build.hash), { signal })
         if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`)
         return res.body.pipeThrough(countBytes())
     }
 
-    async function toFolder(
+    async function downloadToFolder(
         dir: FileSystemDirectoryHandle,
         signal: AbortSignal,
     ) {
@@ -127,7 +126,10 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
         await Promise.all(Array.from({ length: CONCURRENCY }, worker))
     }
 
-    async function toZip(file: FileSystemFileHandle, signal: AbortSignal) {
+    async function downloadToZip(
+        file: FileSystemFileHandle,
+        signal: AbortSignal,
+    ) {
         async function* entries() {
             for (const build of builds) {
                 if (signal.aborted) return
@@ -138,7 +140,7 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
                 try {
                     yield {
                         name,
-                        lastModified: new Date(Number(build.first_seen)),
+                        lastModified: new Date(build.firstSeen),
                         input: await fetchArchive(build, signal),
                     }
                     update((p) => ({ done: p.done + 1 }))
@@ -158,12 +160,12 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
         }
     }
 
-    async function asDownloads(signal: AbortSignal) {
+    async function downloadSeparately(signal: AbortSignal) {
         for (const build of builds) {
             if (signal.aborted) return
 
             const a = document.createElement("a")
-            a.href = bundleArchiveUrl(build.build_hash)
+            a.href = bundleArchiveUrl(build.hash)
             a.download = archiveName(build)
             a.click()
             update((p) => ({ done: p.done + 1 }))
@@ -171,9 +173,9 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
         }
     }
 
-    async function start(mode: Mode) {
-        const { showDirectoryPicker, showSaveFilePicker } = pickers()
-        let run: (signal: AbortSignal) => Promise<void>
+    async function startDownload(mode: Mode) {
+        const { showDirectoryPicker, showSaveFilePicker } = getFilePickers()
+        let download: (signal: AbortSignal) => Promise<void>
 
         try {
             if (mode === "zip" && showSaveFilePicker) {
@@ -187,19 +189,19 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
                         },
                     ],
                 })
-                run = (signal) => toZip(file, signal)
+                download = (signal) => downloadToZip(file, signal)
             } else if (showDirectoryPicker) {
                 const dir = await showDirectoryPicker({
                     id: "discord-bundles",
                     mode: "readwrite",
                 })
-                run = (signal) => toFolder(dir, signal)
+                download = (signal) => downloadToFolder(dir, signal)
             } else if (
                 window.confirm(
                     `Your browser will start ${builds.length} separate downloads (about 25 MB each) and may ask you to allow multiple downloads. Continue?`,
                 )
             ) {
-                run = asDownloads
+                download = downloadSeparately
             } else {
                 return
             }
@@ -221,7 +223,7 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
         })
 
         try {
-            await run(controller.signal)
+            await download(controller.signal)
         } catch (e) {
             console.error(e)
             update((p) => ({ failed: [...p.failed, "archive"] }))
@@ -243,7 +245,7 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
             <div className="flex flex-wrap items-center gap-2">
                 <button
                     type="button"
-                    onClick={() => start("separate")}
+                    onClick={() => startDownload("separate")}
                     disabled={running}
                     className={actionClass}
                 >
@@ -257,7 +259,7 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
                 {canZip && (
                     <button
                         type="button"
-                        onClick={() => start("zip")}
+                        onClick={() => startDownload("zip")}
                         disabled={running}
                         className={actionClass}
                     >
@@ -278,7 +280,7 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
                         <X size={16} /> Cancel
                     </button>
                 )}
-                <span className={mutedTextClass}>
+                <span className="text-sm text-neutral-500 dark:text-neutral-400">
                     {builds.length} builds, about 25 MB each
                 </span>
             </div>
@@ -290,7 +292,7 @@ export default function DownloadAll({ builds }: { builds: BuildMeta[] }) {
                         max={builds.length}
                         className="h-2 w-full overflow-hidden rounded-full [&::-moz-progress-bar]:bg-rose-500 [&::-webkit-progress-bar]:bg-zinc-300 dark:[&::-webkit-progress-bar]:bg-zinc-800 [&::-webkit-progress-value]:bg-rose-500"
                     />
-                    <p className={mutedTextClass}>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         {handled} / {builds.length}
                         {progress.bytes > 0 &&
                             ` · ${formatBytes(progress.bytes)}`}

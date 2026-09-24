@@ -1,27 +1,27 @@
-/// <reference lib="webworker" />
 import { SERVER_BASE_URL } from "../config"
-import initWasm, {
+import init, {
     get_builds,
     set_server_base_url,
 } from "../libsadancore/libsadancore.js"
-import type { BuildMeta, ReleaseChannel } from "../types"
-import { exposeToClients } from "./expose"
+import type { Build, ReleaseChannel } from "../types"
+import { exposeWorker } from "./expose"
 
-const CHANNELS: ReleaseChannel[] = ["stable", "canary"]
+const isReleaseChannel = (channel: string): channel is ReleaseChannel =>
+    channel === "stable" || channel === "canary"
 
-async function getBuilds(): Promise<BuildMeta[]> {
-    await initWasm()
+async function getBuilds(): Promise<Build[]> {
+    await init()
     set_server_base_url(SERVER_BASE_URL)
 
-    return (await get_builds()).map((meta) => ({
-        build_hash: meta.build_hash,
-        build_number: meta.build_number,
-        entry_point: meta.entry_point,
-        first_seen: meta.first_seen,
-        channels: CHANNELS.filter((c) => meta.channels.includes(c)),
+    const metadata = await get_builds()
+    return metadata.map((build) => ({
+        hash: build.build_hash,
+        number: build.build_number,
+        firstSeen: Number(build.first_seen),
+        channels: build.channels.filter(isReleaseChannel),
     }))
 }
 
-export type GetBuildsFn = typeof getBuilds
+export type GetBuilds = typeof getBuilds
 
-exposeToClients(getBuilds)
+exposeWorker(getBuilds)

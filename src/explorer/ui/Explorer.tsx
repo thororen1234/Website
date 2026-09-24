@@ -12,25 +12,21 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Github from "@/components/Icons/Github"
 import { bundleArchiveUrl, SITE_REPO_URL, UPSTREAM_REPO_URL } from "../config"
-import { registerLSPHandlers } from "../lsp"
+import { registerLanguageFeatures } from "../lsp"
 import { setupMonaco } from "../monaco"
-import { parseModuleId, parseViewSearch, viewHref } from "../routes"
-import { initBuild, useExplorerStore } from "../store"
-import type { TBundleHash, TModuleId } from "../types"
+import { moduleHref, readModuleId, readSelection } from "../routes"
+import { loadBuild, useExplorerStore } from "../store"
 import CodeView from "./CodeView"
 import GraphView from "./GraphView"
 import SettingsDialog from "./SettingsDialog"
 import Sidebar from "./Sidebar"
-import {
-    iconButtonClass,
-    linkTextClass,
-    tabClass,
-    tabGroupClass,
-} from "./styles"
 import { errorMessage, useAsync } from "./useAsync"
+
+const iconButtonClass =
+    "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-zinc-300 bg-zinc-100 text-neutral-600 transition-colors hover:bg-zinc-200 hover:text-rose-500 active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300 dark:hover:bg-zinc-800"
 
 function useSiteDark() {
     const [dark, setDark] = useState(true)
@@ -63,28 +59,30 @@ export default function Explorer() {
     const router = useRouter()
     const dark = useSiteDark()
 
-    const buildHash = decodeURIComponent(params.buildHash) as TBundleHash
-    const moduleId = parseModuleId(params.moduleId) as TModuleId | null
+    const buildHash = decodeURIComponent(params.buildHash)
+    const selectedModule = readModuleId(params.moduleId)
     const search = useMemo(
-        () => parseViewSearch(new URLSearchParams(searchParams.toString())),
+        () => readSelection(new URLSearchParams(searchParams.toString())),
         [searchParams],
     )
 
     useEffect(() => {
         useExplorerStore.setState({
-            navigate: (id, s) => router.push(viewHref(buildHash, id, s)),
+            navigate: (id, selection) =>
+                router.push(moduleHref(buildHash, id, selection)),
         })
     }, [router, buildHash])
 
     useEffect(() => {
-        useExplorerStore.setState({ selectedModule: moduleId })
-    }, [moduleId])
+        useExplorerStore.setState({ selectedModule })
+    }, [selectedModule])
 
-    const load = useAsync(async () => {
-        await Promise.all([setupMonaco(), initBuild(buildHash)])
-        registerLSPHandlers()
-        useExplorerStore.setState({ selectedModule: moduleId })
-    }, [buildHash])
+    const loadExplorer = useCallback(async () => {
+        await Promise.all([setupMonaco(), loadBuild(buildHash)])
+        registerLanguageFeatures()
+        useExplorerStore.setState({ selectedModule })
+    }, [buildHash, selectedModule])
+    const load = useAsync(loadExplorer)
 
     if (load.status === "error") {
         return (
@@ -93,7 +91,10 @@ export default function Explorer() {
                     Couldn&apos;t load build {buildHash}
                 </p>
                 <p className="text-sm">{errorMessage(load.error)}</p>
-                <Link href="/discord/modules" className={linkTextClass}>
+                <Link
+                    href="/discord/modules"
+                    className="cursor-pointer text-rose-600 hover:underline dark:text-rose-400"
+                >
                     Back to build list
                 </Link>
             </FullScreen>
@@ -120,10 +121,10 @@ function ExplorerLayout({
     search,
     dark,
 }: {
-    search: ReturnType<typeof parseViewSearch>
+    search: ReturnType<typeof readSelection>
     dark: boolean
 }) {
-    const panel = useExplorerStore((s) => s.activePanel)
+    const panel = useExplorerStore((s) => s.panel)
     const sidebarOpen = useExplorerStore((s) => s.sidebarOpen)
 
     return (
@@ -150,7 +151,7 @@ function ExplorerLayout({
 
 function Header() {
     const buildHash = useExplorerStore((s) => s.buildHash)!
-    const panel = useExplorerStore((s) => s.activePanel)
+    const panel = useExplorerStore((s) => s.panel)
     const sidebarOpen = useExplorerStore((s) => s.sidebarOpen)
     const settingsRef = useRef<HTMLDialogElement>(null)
 
@@ -160,7 +161,9 @@ function Header() {
                 <button
                     type="button"
                     onClick={() =>
-                        useExplorerStore.setState({ sidebarOpen: !sidebarOpen })
+                        useExplorerStore.setState({
+                            sidebarOpen: !sidebarOpen,
+                        })
                     }
                     aria-label={`${sidebarOpen ? "Hide" : "Show"} module sidebar`}
                     title={`${sidebarOpen ? "Hide" : "Show"} module sidebar`}
@@ -187,16 +190,18 @@ function Header() {
 
             <div
                 role="tablist"
-                className={`inline-flex w-fit ${tabGroupClass}`}
+                className="inline-flex w-fit rounded-xl bg-zinc-200 p-1 dark:bg-zinc-800"
             >
                 <button
                     type="button"
                     role="tab"
                     aria-selected={panel === "code"}
-                    onClick={() =>
-                        useExplorerStore.setState({ activePanel: "code" })
-                    }
-                    className={tabClass(panel === "code")}
+                    onClick={() => useExplorerStore.setState({ panel: "code" })}
+                    className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                        panel === "code"
+                            ? "bg-zinc-100 text-neutral-900 shadow-sm dark:bg-zinc-700 dark:text-neutral-100"
+                            : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+                    }`}
                 >
                     <FileCode size={14} /> Code
                 </button>
@@ -205,9 +210,13 @@ function Header() {
                     role="tab"
                     aria-selected={panel === "graph"}
                     onClick={() =>
-                        useExplorerStore.setState({ activePanel: "graph" })
+                        useExplorerStore.setState({ panel: "graph" })
                     }
-                    className={tabClass(panel === "graph")}
+                    className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                        panel === "graph"
+                            ? "bg-zinc-100 text-neutral-900 shadow-sm dark:bg-zinc-700 dark:text-neutral-100"
+                            : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+                    }`}
                 >
                     <Network size={14} /> Graph
                 </button>
