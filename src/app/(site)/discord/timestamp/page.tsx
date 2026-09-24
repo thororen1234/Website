@@ -7,12 +7,17 @@ export const metadata = createMetadata({
     title: "Timestamp Generator",
     description:
         "Make Discord timestamp codes that show the right time for everyone who reads them.",
-    path: "/misc/timestamp",
+    path: "/discord/timestamp",
 })
 
 export default function TimestampPage() {
     return (
-        <ToolPage icon={Clock} title="Timestamp generator" slug="timestamp">
+        <ToolPage
+            section="discord"
+            icon={Clock}
+            title="Timestamp generator"
+            slug="timestamp"
+        >
             <TimestampTool />
         </ToolPage>
     )

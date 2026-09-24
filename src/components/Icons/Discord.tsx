@@ -3,6 +3,7 @@ import type { LucideProps } from "lucide-react"
 export default function Discord({
     size = 24,
     color = "currentColor",
+    fill: _fill,
     ...rest
 }: LucideProps) {
     return (

@@ -1,4 +1,11 @@
-import { discordUserId, miscPages, projects, siteUrl, socials } from "@/consts"
+import {
+    discordPages,
+    discordUserId,
+    miscPages,
+    projects,
+    siteUrl,
+    socials,
+} from "@/consts"
 import { createCache } from "@/lib/daily-cache"
 import { getProject, isActive, yearRange } from "@/lib/projects"
 import { excerpt } from "@/lib/text"
@@ -147,7 +154,9 @@ export function miscEmbed(page: MiscPage) {
             { type: 14, spacing: 1 },
             ...linkRows([
                 { label: "Open page", url: `${siteUrl}${page.href}` },
-                { label: "All misc", url: `${siteUrl}/misc` },
+                page.href.startsWith("/discord/")
+                    ? { label: "All Discord tools", url: `${siteUrl}/discord` }
+                    : { label: "All misc", url: `${siteUrl}/misc` },
             ]),
         ],
     }
@@ -166,6 +175,12 @@ const PAGE_INFO: Record<
         title: "Now",
         description:
             "A live snapshot of what I'm playing, listening to, watching and coding, plus recent GitHub activity.",
+    },
+    discord: {
+        title: "Discord",
+        description:
+            "Tools for Discord users, bot developers and client modders.",
+        icon: FAVICON,
     },
     misc: {
         title: "Misc",
@@ -186,8 +201,11 @@ export async function getEmbed(params: URLSearchParams) {
     }
 
     if (page === "tool" && slug) {
-        const tool = miscPages.find(
-            ({ href }) => href === `/misc/${slug}` || href === `/${slug}`,
+        const tool = [...discordPages, ...miscPages].find(
+            ({ href }) =>
+                href === `/discord/${slug}` ||
+                href === `/misc/${slug}` ||
+                href === `/${slug}`,
         )
         return tool ? miscEmbed(tool) : null
     }

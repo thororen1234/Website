@@ -7,12 +7,17 @@ export const metadata = createMetadata({
     title: "Snowflake Decoder",
     description:
         "Find out when a Discord user, server, channel or message was created from its ID.",
-    path: "/misc/snowflake",
+    path: "/discord/snowflake",
 })
 
 export default function SnowflakePage() {
     return (
-        <ToolPage icon={Hash} title="Snowflake decoder" slug="snowflake">
+        <ToolPage
+            section="discord"
+            icon={Hash}
+            title="Snowflake decoder"
+            slug="snowflake"
+        >
             <SnowflakeTool />
         </ToolPage>
     )

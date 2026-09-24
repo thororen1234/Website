@@ -1,1 +1,5 @@
 pnpm-lock.yaml
+src/explorer/libsadancore
+src/explorer/lsp/intl-keys.json
+src/explorer/LICENSE.md
+src/explorer/libsadancore.patch

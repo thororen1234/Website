@@ -7,15 +7,16 @@ export const metadata = createMetadata({
     title: "Discord Markdown Preview",
     description:
         "Preview Discord markdown, spoilers, quotes and code blocks before you send them.",
-    path: "/misc/discord-markdown",
+    path: "/discord/markdown",
 })
 
 export default function DiscordMarkdownPage() {
     return (
         <ToolPage
+            section="discord"
             icon={MessageSquareCode}
             title="Discord markdown preview"
-            slug="discord-markdown"
+            slug="markdown"
         >
             <DiscordMarkdownTool />
         </ToolPage>

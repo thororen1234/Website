@@ -10,6 +10,7 @@ import {
     MapPin,
     MessageSquareCode,
     Notebook,
+    PackageSearch,
     Palette,
     Pickaxe,
     Radio,
@@ -45,45 +46,56 @@ export const navLinks: NavLink[] = [
     { text: "Home", href: "/", icon: House },
     { text: "Projects", href: "/projects", icon: Notebook },
     { text: "Now", href: "/now", icon: Radio },
+    { text: "Discord", href: "/discord", icon: Discord },
     { text: "Misc", href: "/misc", icon: Shapes },
 ]
 
-export const miscPages: MiscPage[] = [
+export const discordPages: MiscPage[] = [
+    {
+        title: "Discord Module Explorer",
+        description:
+            "Browse, search and cross-reference the webpack modules of recent Discord builds.",
+        href: "/discord/modules",
+        icon: PackageSearch,
+    },
     {
         title: "Embed Color Converter",
         description:
             "Convert between hex, decimal, RGB and HSL values for Discord embed colors.",
-        href: "/misc/color",
+        href: "/discord/color",
         icon: Palette,
     },
     {
         title: "Bot Invite Generator",
         description:
             "Build a Discord bot invite link and inspect its permission number.",
-        href: "/misc/bot-invite",
+        href: "/discord/bot-invite",
         icon: Bot,
     },
     {
         title: "Snowflake Decoder",
         description:
             "Paste a Discord ID, mention or message link to see when it was created.",
-        href: "/misc/snowflake",
+        href: "/discord/snowflake",
         icon: Hash,
     },
     {
         title: "Timestamp Generator",
         description:
             "Make Discord timestamp codes that show the right time for everyone.",
-        href: "/misc/timestamp",
+        href: "/discord/timestamp",
         icon: Clock,
     },
     {
         title: "Discord Markdown Preview",
         description:
             "Preview Discord markdown, spoilers, quotes and code blocks before you send them.",
-        href: "/misc/discord-markdown",
+        href: "/discord/markdown",
         icon: MessageSquareCode,
     },
+]
+
+export const miscPages: MiscPage[] = [
     {
         title: "Developer Tools",
         description:

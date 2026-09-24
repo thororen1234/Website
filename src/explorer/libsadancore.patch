@@ -1,0 +1,129 @@
+diff --git a/crates/libsadancore/src/constants.rs b/crates/libsadancore/src/constants.rs
+index 88743b3..2bcd037 100644
+--- a/crates/libsadancore/src/constants.rs
++++ b/crates/libsadancore/src/constants.rs
+@@ -1,6 +1,6 @@
+-use const_format::formatc;
++use std::cell::RefCell;
+ 
+-// pub const SERVER_BASE_URL: &str = "https://s-d-br.sadan.zip";
++use wasm_bindgen::prelude::wasm_bindgen;
+ 
+ const IS_SERVER_LOCAL: bool = cfg!(feature = "local-server");
+ #[cfg(not(debug_assertions))]
+@@ -11,16 +11,35 @@ const _: () = {
+ 	);
+ };
+ 
+-pub(crate) const SERVER_BASE_URL: &str = if IS_SERVER_LOCAL {
++const DEFAULT_SERVER_BASE_URL: &str = if IS_SERVER_LOCAL {
+ 	"http://localhost:8484"
+ } else {
+ 	"https://s-d-br.sadan.zip"
+ };
+ 
+-pub(crate) const LIST_BUILDS_ENDPOINT: &str =
+-	formatc!("{SERVER_BASE_URL}/builds");
++thread_local! {
++	static SERVER_BASE_URL: RefCell<String> =
++		RefCell::new(DEFAULT_SERVER_BASE_URL.to_owned());
++}
++
++/// Points every request at another explorer_server compatible host.
++#[wasm_bindgen]
++pub fn set_server_base_url(url: &str) {
++	SERVER_BASE_URL.with_borrow_mut(|base| {
++		url.trim_end_matches('/').clone_into(base);
++	});
++}
++
++fn server_base_url() -> String {
++	SERVER_BASE_URL.with_borrow(Clone::clone)
++}
++
++#[expect(non_snake_case)]
++pub(crate) fn LIST_BUILDS_ENDPOINT() -> String {
++	format!("{}/builds", server_base_url())
++}
+ 
+ #[expect(non_snake_case)]
+ pub(crate) fn FULL_BUNDLE_ENDPOINT(build_hash: &str) -> String {
+-	format!("{SERVER_BASE_URL}/build/{build_hash}/full")
++	format!("{}/build/{build_hash}/full", server_base_url())
+ }
+diff --git a/crates/libsadancore/src/explorer/meta.rs b/crates/libsadancore/src/explorer/meta.rs
+index f2d8280..180fda0 100644
+--- a/crates/libsadancore/src/explorer/meta.rs
++++ b/crates/libsadancore/src/explorer/meta.rs
+@@ -1,5 +1,8 @@
++use std::io::Read as _;
++
+ use explorer_types::{BuildList, BundleMetadata, TModuleId};
+ use js_sys::{ArrayBuffer, Uint8Array};
++use serde::Deserialize;
+ use wasm_bindgen::{JsCast as _, prelude::wasm_bindgen};
+ 
+ use crate::{
+@@ -9,14 +12,21 @@ use crate::{
+ };
+ 
+ #[wasm_bindgen]
+-pub struct Meta(BundleMetadata);
++pub struct Meta(BundleMetadata, Vec<String>);
+ 
+ impl From<BundleMetadata> for Meta {
+ 	fn from(value: BundleMetadata) -> Self {
+-		Self(value)
++		Self(value, Vec::new())
+ 	}
+ }
+ 
++/// Release channels a build was seen on. Only sent by servers that track more than one channel.
++#[derive(Deserialize, Default)]
++struct MetaChannels {
++	#[serde(default)]
++	channels: Vec<String>,
++}
++
+ #[wasm_bindgen]
+ #[expect(
+ 	clippy::missing_const_for_fn,
+@@ -39,6 +49,10 @@ impl Meta {
+ 	pub fn entry_point(&self) -> Option<TModuleId> {
+ 		self.0.entry_point.map(Into::into)
+ 	}
++	#[wasm_bindgen(getter)]
++	pub fn channels(&self) -> Vec<String> {
++		self.1.clone()
++	}
+ 	#[wasm_bindgen]
+ 	pub fn sort_newest_first(a: &Self, b: &Self) -> i8 {
+ 		a.0.first_seen.cmp(&b.0.first_seen) as i8
+@@ -49,7 +63,7 @@ impl Meta {
+ pub async fn get_builds() -> Result<Box<[Meta]>> {
+ 	// fetch list of builds from the server
+ 	// TODO: streaming decode
+-	let arr_buf = fetch(LIST_BUILDS_ENDPOINT)
++	let arr_buf = fetch(&LIST_BUILDS_ENDPOINT())
+ 		.await?
+ 		.array_buffer()?
+ 		.fut()
+@@ -62,10 +76,14 @@ pub async fn get_builds() -> Result<Box<[Meta]>> {
+ 	data.builds
+ 		.into_iter()
+ 		.map(|zstd_raw_meta| -> Result<_> {
+-			let mpk_raw_meta =
+-				zstd::Decoder::new(&*zstd_raw_meta).map_err(Error::Zstd)?;
+-			let d = rmp_serde::from_read(mpk_raw_meta)?;
+-			Ok(Meta(d))
++			let mut mpk_raw_meta = Vec::new();
++			zstd::Decoder::new(&*zstd_raw_meta)
++				.and_then(|mut decoder| decoder.read_to_end(&mut mpk_raw_meta))
++				.map_err(Error::Zstd)?;
++			let meta = rmp_serde::from_slice(&mpk_raw_meta)?;
++			let MetaChannels { channels } =
++				rmp_serde::from_slice(&mpk_raw_meta).unwrap_or_default();
++			Ok(Meta(meta, channels))
+ 		})
+ 		.collect()
+ }

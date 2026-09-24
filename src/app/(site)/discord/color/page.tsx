@@ -7,12 +7,17 @@ export const metadata = createMetadata({
     title: "Embed Color Converter",
     description:
         "Convert between hex, RGB, HSL and the decimal number Discord embeds use.",
-    path: "/misc/color",
+    path: "/discord/color",
 })
 
 export default function ColorPage() {
     return (
-        <ToolPage icon={Palette} title="Embed color converter" slug="color">
+        <ToolPage
+            section="discord"
+            icon={Palette}
+            title="Embed color converter"
+            slug="color"
+        >
             <ColorTool />
         </ToolPage>
     )
