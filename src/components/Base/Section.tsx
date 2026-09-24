@@ -6,6 +6,7 @@ interface Props {
     title: string
     badge?: ReactNode
     action?: ReactNode
+    className?: string
     children: ReactNode
 }
 
@@ -14,10 +15,11 @@ export default function Section({
     title,
     badge,
     action,
+    className = "",
     children,
 }: Props) {
     return (
-        <section className="flex flex-col gap-3">
+        <section className={`flex flex-col gap-3 ${className}`}>
             <div className="flex items-center gap-1 text-sm font-medium text-neutral-600 dark:text-neutral-400">
                 <Icon size={18} fill="#ffffff10" />
                 {title}

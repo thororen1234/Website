@@ -5,7 +5,7 @@ import { formatDuration } from "@/lib/text"
 import { getCodingStats } from "@/lib/wakatime"
 import type { Language } from "@/lib/wakatime-parse"
 
-const VISIBLE_LANGUAGES = 6
+const VISIBLE_LANGUAGES = 7
 
 function LanguageRow({ name, seconds, percent }: Language) {
     return (

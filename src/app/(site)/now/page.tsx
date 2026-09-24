@@ -34,10 +34,14 @@ export default function Now() {
                     <WatchingSection />
                 </div>
 
-                <div className="flex flex-col gap-8">
+                <div className="flex flex-col gap-8 self-stretch">
                     <CodingSection />
 
-                    <Section icon={GitCommitHorizontal} title="Recent activity">
+                    <Section
+                        icon={GitCommitHorizontal}
+                        title="Recent activity"
+                        className="flex-1"
+                    >
                         <ActivityFeed />
                     </Section>
                 </div>

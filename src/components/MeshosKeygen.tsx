@@ -22,7 +22,7 @@ export default function MeshosKeygen() {
 
     function run() {
         const v = input.trim()
-        setOutput(v ? gen(v) : "// enter an id")
+        setOutput(v ? gen(v) : "Please enter an ID")
     }
 
     return (

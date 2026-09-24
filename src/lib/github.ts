@@ -151,7 +151,7 @@ export async function getRecentActivity(
 ): Promise<Activity[] | null> {
     try {
         const res = await fetch(
-            `https://api.github.com/users/${githubUser}/events/public?per_page=50`,
+            `https://api.github.com/users/${githubUser}/events/public?per_page=100`,
             {
                 headers: {
                     Accept: "application/vnd.github+json",

@@ -83,6 +83,12 @@ export interface LanyardData {
             identity_guild_id?: string
             badge?: string
         } | null
+        collectibles?: {
+            nameplate?: {
+                asset: string
+                palette?: string
+            } | null
+        } | null
     }
 }
 
