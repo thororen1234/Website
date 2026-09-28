@@ -79,7 +79,7 @@ export default function VirtualList({
         <div
             ref={containerRef}
             onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
-            className={`min-h-0 scrollbar-none overflow-y-auto [&::-webkit-scrollbar]:hidden ${className}`}
+            className={`min-h-0 [scrollbar-width:thin] [scrollbar-color:theme(colors.zinc.400)_transparent] overflow-y-auto dark:[scrollbar-color:theme(colors.zinc.600)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-zinc-400 hover:[&::-webkit-scrollbar-thumb]:bg-zinc-500 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-600 dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-500 [&::-webkit-scrollbar-track]:bg-transparent ${className}`}
         >
             <div className="relative" style={{ height: count * rowHeight }}>
                 {rows}
