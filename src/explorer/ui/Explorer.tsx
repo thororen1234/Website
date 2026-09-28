@@ -263,7 +263,7 @@ function Header() {
                     href={`${SITE_REPO_URL}/tree/main/src/explorer`}
                     target="_blank"
                     rel="noreferrer"
-                    className="hidden text-xs text-neutral-500 hover:text-rose-500 sm:block"
+                    className="hidden h-9 items-center rounded-lg border border-zinc-300 bg-zinc-100 px-3 text-xs text-neutral-600 transition-colors hover:bg-zinc-200 hover:text-rose-500 active:scale-[.97] sm:flex dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300 dark:hover:bg-zinc-800"
                 >
                     Source
                 </a>
