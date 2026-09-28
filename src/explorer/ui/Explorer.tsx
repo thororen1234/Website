@@ -3,6 +3,7 @@
 import {
     Download,
     FileCode,
+    FileText,
     LoaderCircle,
     Network,
     PanelLeftClose,
@@ -250,22 +251,24 @@ function Header() {
                     <Undo2 size={16} />
                 </Link>
                 <a
-                    href={UPSTREAM_REPO_URL}
+                    href={SITE_REPO_URL}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label="Explorer by sadan4 (AGPL-3.0)"
-                    title="Explorer by sadan4 (AGPL-3.0)"
+                    aria-label="Website source on GitHub"
+                    title="Website source on GitHub"
                     className={iconButtonClass}
                 >
                     <Github size={16} />
                 </a>
                 <a
-                    href={`${SITE_REPO_URL}/tree/main/src/explorer`}
+                    href={UPSTREAM_REPO_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="hidden h-9 items-center rounded-lg border border-zinc-300 bg-zinc-100 px-3 text-xs text-neutral-600 transition-colors hover:bg-zinc-200 hover:text-rose-500 active:scale-[.97] sm:flex dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300 dark:hover:bg-zinc-800"
+                    aria-label="Source by sadan4"
+                    title="Source by sadan4"
+                    className={iconButtonClass}
                 >
-                    Source
+                    <FileText size={16} />
                 </a>
             </div>
             <SettingsDialog ref={settingsRef} />
