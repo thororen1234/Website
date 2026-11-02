@@ -3,7 +3,7 @@ WORKDIR /app
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN npm install -g pnpm
 
 COPY package*.json pnpm-*.yaml ./
 RUN pnpm install --frozen-lockfile
@@ -19,7 +19,7 @@ ENV HOSTNAME=0.0.0.0
 ENV PORT=8080
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN npm install -g pnpm
 
 COPY package.json pnpm-*.yaml ./
 RUN pnpm install --prod --frozen-lockfile

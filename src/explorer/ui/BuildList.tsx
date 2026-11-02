@@ -8,8 +8,7 @@ import {
     Smartphone,
 } from "lucide-react"
 import Link from "next/link"
-import { type ReactNode, useMemo, useState } from "react"
-import { buttonClass } from "@/components/Tools/fields"
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react"
 import { getAndroidBuilds, getBuilds } from "../api"
 import { androidBundleUrl } from "../config"
 import { moduleHref } from "../routes"
@@ -26,7 +25,7 @@ const dateFormat = new Intl.DateTimeFormat(undefined, {
     timeStyle: "short",
 })
 
-const INITIAL_COUNT = 24
+const PAGE_SIZE = 24
 type Platform = "desktop" | "mobile"
 type Filter<C> = "all" | C
 
@@ -38,6 +37,7 @@ const PLATFORMS: { value: Platform; label: string; icon: typeof Monitor }[] = [
 const FILTERS: { value: Filter<ReleaseChannel>; label: string }[] = [
     { value: "all", label: "All" },
     { value: "stable", label: "Stable" },
+    { value: "ptb", label: "PTB" },
     { value: "canary", label: "Canary" },
 ]
 
@@ -53,6 +53,7 @@ const badgeClass =
 
 const channelBadgeClass: Record<ReleaseChannel | AndroidChannel, string> = {
     stable: "bg-sky-500/15 text-sky-600 dark:text-sky-400",
+    ptb: "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400",
     canary: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
     beta: "bg-violet-500/15 text-violet-600 dark:text-violet-400",
     alpha: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
@@ -155,8 +156,9 @@ function Builds<
     note?: string
 }) {
     const builds = useAsync(load)
-    const [showAll, setShowAll] = useState(false)
+    const [count, setCount] = useState(PAGE_SIZE)
     const [filter, setFilter] = useState<Filter<C>>("all")
+    const sentinel = useRef<HTMLDivElement>(null)
 
     const sorted = useMemo(
         () =>
@@ -183,6 +185,28 @@ function Builds<
         return keys
     }, [sorted, keyOf])
 
+    const filtered = useMemo(
+        () =>
+            filter === "all"
+                ? sorted
+                : sorted.filter((build) => build.channels.includes(filter)),
+        [sorted, filter],
+    )
+    const hasMore = filtered.length > count
+
+    useEffect(() => {
+        const el = sentinel.current
+        if (!el || !hasMore) return
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) setCount((c) => c + PAGE_SIZE)
+            },
+            { rootMargin: "800px" },
+        )
+        observer.observe(el)
+        return () => observer.disconnect()
+    }, [hasMore, count])
+
     if (builds.status === "error") {
         return (
             <p className="text-sm text-rose-500">
@@ -204,12 +228,6 @@ function Builds<
         return <p className={mutedClass}>No builds available right now.</p>
     }
 
-    const filtered =
-        filter === "all"
-            ? sorted
-            : sorted.filter((build) => build.channels.includes(filter))
-    const visible = showAll ? filtered : filtered.slice(0, INITIAL_COUNT)
-
     return (
         <>
             {hasChannels && (
@@ -217,7 +235,10 @@ function Builds<
                     label="Release channel"
                     options={filters}
                     value={filter}
-                    onChange={setFilter}
+                    onChange={(value) => {
+                        setFilter(value)
+                        setCount(PAGE_SIZE)
+                    }}
                 />
             )}
 
@@ -225,7 +246,7 @@ function Builds<
 
             {filtered.length ? (
                 <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {visible.map((build) => (
+                    {filtered.slice(0, count).map((build) => (
                         <li key={keyOf(build)}>
                             <Card
                                 build={build}
@@ -238,15 +259,7 @@ function Builds<
                 <p className={mutedClass}>No {filter} builds right now.</p>
             )}
 
-            {!showAll && filtered.length > INITIAL_COUNT && (
-                <button
-                    type="button"
-                    onClick={() => setShowAll(true)}
-                    className={`w-fit self-center ${buttonClass}`}
-                >
-                    Show all {filtered.length} builds
-                </button>
-            )}
+            {hasMore && <div ref={sentinel} className="h-px" />}
         </>
     )
 }

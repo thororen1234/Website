@@ -7,7 +7,7 @@ import type { Build, ReleaseChannel } from "../types"
 import { exposeWorker } from "./expose"
 
 const isReleaseChannel = (channel: string): channel is ReleaseChannel =>
-    channel === "stable" || channel === "canary"
+    channel === "stable" || channel === "ptb" || channel === "canary"
 
 async function getBuilds(): Promise<Build[]> {
     await init()

@@ -1,4 +1,4 @@
-export type ReleaseChannel = "stable" | "canary"
+export type ReleaseChannel = "stable" | "ptb" | "canary"
 
 export interface Build {
     hash: string
