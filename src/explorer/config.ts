@@ -7,3 +7,6 @@ export const SITE_REPO_URL = "https://github.com/thororen1234/Website"
 
 export const bundleArchiveUrl = (buildHash: string) =>
     `${SERVER_BASE_URL}/build/archive/${buildHash}.7z`
+
+export const androidBundleUrl = (versionCode: number) =>
+    `${SERVER_BASE_URL}/android/${versionCode}/bundle`

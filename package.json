@@ -16,7 +16,6 @@
     "dependencies": {
         "@shikijs/monaco": "^4.4.3",
         "@xyflow/react": "^12.11.6",
-        "client-zip": "^2.5.1",
         "comlink": "^4.4.2",
         "lucide-react": "^1.47.0",
         "monaco-editor": "^0.56.0",

@@ -7,6 +7,17 @@ export interface Build {
     channels: ReleaseChannel[]
 }
 
+export type AndroidChannel = "alpha" | "beta" | "stable"
+
+export interface AndroidBuild {
+    versionCode: number
+    version: string
+    firstSeen: number
+    channels: AndroidChannel[]
+    bundleSize: number
+    hermesVersion: number | null
+}
+
 export interface ModuleDeps {
     syncUses: number[]
     lazyUses: number[]

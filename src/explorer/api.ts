@@ -1,4 +1,6 @@
 import * as comlink from "comlink"
+import { SERVER_BASE_URL } from "./config"
+import type { AndroidBuild } from "./types"
 import type { GetBuilds } from "./worker/builds.worker"
 import type { BundleWorkerApi } from "./worker/bundle.worker"
 
@@ -14,6 +16,12 @@ export function getBuilds() {
         }),
     )
     return builds()
+}
+
+export async function getAndroidBuilds(): Promise<AndroidBuild[]> {
+    const res = await fetch(`${SERVER_BASE_URL}/android/builds`)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return res.json()
 }
 
 const bundleApis = new Map<string, Promise<BundleApi>>()
