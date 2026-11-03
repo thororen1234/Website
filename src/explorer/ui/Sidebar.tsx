@@ -1,5 +1,5 @@
 import { ArrowRight, Files, ListTree, Search } from "lucide-react"
-import { useCallback, useMemo, useState } from "react"
+import { type ReactNode, useCallback, useMemo, useState } from "react"
 import { fieldClass } from "@/components/Tools/fields"
 import { useExplorerStore } from "../store"
 import ModuleDetails from "./ModuleDetails"
@@ -19,6 +19,32 @@ export default function Sidebar() {
     const [tab, setTab] = useState<Tab>("modules")
 
     return (
+        <SidebarFrame tabs={tabs} tab={tab} onTabChange={setTab}>
+            <div hidden={tab !== "modules"} className="contents">
+                <ModuleList />
+            </div>
+            <div hidden={tab !== "search"} className="contents">
+                <ModuleSearch />
+            </div>
+            <div hidden={tab !== "details"} className="contents">
+                <ModuleDetails />
+            </div>
+        </SidebarFrame>
+    )
+}
+
+export function SidebarFrame<T extends string>({
+    tabs,
+    tab,
+    onTabChange,
+    children,
+}: {
+    tabs: readonly { id: T; label: string; icon: typeof Files }[]
+    tab: T
+    onTabChange: (tab: T) => void
+    children: ReactNode
+}) {
+    return (
         <aside className="flex w-80 shrink-0 flex-col border-r border-zinc-300 max-md:absolute max-md:inset-0 max-md:z-10 max-md:w-full max-md:border-r-0 max-md:bg-zinc-100 dark:border-zinc-800 max-md:dark:bg-zinc-950">
             <div className="px-3 py-3">
                 <div
@@ -31,7 +57,7 @@ export default function Sidebar() {
                             role="tab"
                             type="button"
                             aria-selected={tab === id}
-                            onClick={() => setTab(id)}
+                            onClick={() => onTabChange(id)}
                             className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition-colors ${
                                 tab === id
                                     ? "bg-zinc-100 text-neutral-900 shadow-sm dark:bg-zinc-700 dark:text-neutral-100"
@@ -45,17 +71,7 @@ export default function Sidebar() {
                 </div>
             </div>
 
-            <div className="flex min-h-0 grow flex-col">
-                <div hidden={tab !== "modules"} className="contents">
-                    <ModuleList />
-                </div>
-                <div hidden={tab !== "search"} className="contents">
-                    <ModuleSearch />
-                </div>
-                <div hidden={tab !== "details"} className="contents">
-                    <ModuleDetails />
-                </div>
-            </div>
+            <div className="flex min-h-0 grow flex-col">{children}</div>
         </aside>
     )
 }

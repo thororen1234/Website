@@ -7,12 +7,20 @@ export const SITE_REPO_URL = "https://github.com/thororen1234/Website"
 
 export const androidBuildId = (versionCode: number) => `android-${versionCode}`
 
+export function androidVersionCode(buildHash: string) {
+    const android = /^android-(\d+)$/.exec(buildHash)
+    return android ? Number(android[1]) : null
+}
+
 export const androidBundleUrl = (versionCode: number) =>
     `${SERVER_BASE_URL}/android/${versionCode}/bundle`
 
+export const androidSourcesUrl = (versionCode: number) =>
+    `${SERVER_BASE_URL}/android/${versionCode}/sources`
+
 export function bundleArchiveUrl(buildHash: string) {
-    const android = /^android-(\d+)$/.exec(buildHash)
-    return android
-        ? androidBundleUrl(Number(android[1]))
+    const versionCode = androidVersionCode(buildHash)
+    return versionCode != null
+        ? androidBundleUrl(versionCode)
         : `${SERVER_BASE_URL}/build/archive/${buildHash}.7z`
 }

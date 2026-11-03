@@ -11,11 +11,18 @@ import {
     Settings,
     Undo2,
 } from "lucide-react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Github from "@/components/Icons/Github"
-import { bundleArchiveUrl, SITE_REPO_URL, UPSTREAM_REPO_URL } from "../config"
+import { getAndroidBuilds } from "../api"
+import {
+    androidVersionCode,
+    bundleArchiveUrl,
+    SITE_REPO_URL,
+    UPSTREAM_REPO_URL,
+} from "../config"
 import { registerLanguageFeatures } from "../lsp"
 import { setupMonaco } from "../monaco"
 import { moduleHref, readModuleId, readSelection } from "../routes"
@@ -26,11 +33,11 @@ import SettingsDialog from "./SettingsDialog"
 import Sidebar from "./Sidebar"
 import { errorMessage, useAsync } from "./useAsync"
 
-const iconButtonClass =
+export const iconButtonClass =
     "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-zinc-300 bg-zinc-100 text-neutral-600 transition-colors hover:bg-zinc-200 hover:text-rose-500 active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-neutral-300 dark:hover:bg-zinc-800"
 
 // The sidebar covers the code view on narrow screens
-const isNarrow = () => matchMedia("(max-width: 767px)").matches
+export const isNarrow = () => matchMedia("(max-width: 767px)").matches
 
 function useSiteDark() {
     const [dark, setDark] = useState(true)
@@ -49,7 +56,7 @@ function useSiteDark() {
     return dark
 }
 
-function FullScreen({ children }: { children: React.ReactNode }) {
+export function FullScreen({ children }: { children: React.ReactNode }) {
     return (
         <div className="fixed inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-200 p-6 text-center text-neutral-700 dark:bg-zinc-950 dark:text-neutral-300">
             {children}
@@ -57,7 +64,46 @@ function FullScreen({ children }: { children: React.ReactNode }) {
     )
 }
 
+const SourcesExplorer = dynamic(() => import("./SourcesExplorer"), {
+    ssr: false,
+    loading: Loading,
+})
+
+function Loading() {
+    return (
+        <FullScreen>
+            <LoaderCircle className="animate-spin text-rose-500" />
+        </FullScreen>
+    )
+}
+
+// Kotlin Android builds have jadx output instead of JS modules
 export default function Explorer() {
+    const params = useParams<{ buildHash: string }>()
+    const buildHash = decodeURIComponent(params.buildHash)
+    const versionCode = androidVersionCode(buildHash)
+    const hasSources = useCallback(
+        async () =>
+            (await getAndroidBuilds()).some(
+                (build) => build.versionCode === versionCode && build.sources,
+            ),
+        [versionCode],
+    )
+    const sources = useAsync(versionCode == null ? null : hasSources)
+
+    if (
+        versionCode == null ||
+        sources.status === "error" ||
+        sources.data === false
+    ) {
+        return <BundleExplorer />
+    }
+    if (sources.status !== "success") return <Loading />
+
+    return <SourcesExplorer buildHash={buildHash} versionCode={versionCode} />
+}
+
+function BundleExplorer() {
     const params = useParams<{ buildHash: string; moduleId?: string[] }>()
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -136,10 +182,11 @@ function ExplorerLayout({
 }) {
     const panel = useExplorerStore((s) => s.panel)
     const sidebarOpen = useExplorerStore((s) => s.sidebarOpen)
+    const buildHash = useExplorerStore((s) => s.buildHash)!
 
     return (
         <div className="fixed inset-0 flex flex-col bg-zinc-100 text-neutral-800 dark:bg-zinc-950 dark:text-neutral-200">
-            <Header />
+            <Header buildHash={buildHash} />
             <div className="relative flex min-h-0 grow border-t border-zinc-300 dark:border-zinc-800">
                 {sidebarOpen && <Sidebar />}
                 <main className="relative min-w-0 grow">
@@ -159,11 +206,17 @@ function ExplorerLayout({
     )
 }
 
-function Header() {
-    const buildHash = useExplorerStore((s) => s.buildHash)!
+export function Header({
+    buildHash,
+    sources = false,
+}: {
+    buildHash: string
+    sources?: boolean
+}) {
     const panel = useExplorerStore((s) => s.panel)
     const sidebarOpen = useExplorerStore((s) => s.sidebarOpen)
     const settingsRef = useRef<HTMLDialogElement>(null)
+    const sidebarLabel = `${sidebarOpen ? "Hide" : "Show"} ${sources ? "file" : "module"} sidebar`
 
     return (
         <header className="flex flex-wrap items-center justify-between gap-2 px-2 py-2">
@@ -175,8 +228,8 @@ function Header() {
                             sidebarOpen: !sidebarOpen,
                         })
                     }
-                    aria-label={`${sidebarOpen ? "Hide" : "Show"} module sidebar`}
-                    title={`${sidebarOpen ? "Hide" : "Show"} module sidebar`}
+                    aria-label={sidebarLabel}
+                    title={sidebarLabel}
                     className={iconButtonClass}
                 >
                     {sidebarOpen ? (
@@ -198,52 +251,58 @@ function Header() {
                 </div>
             </div>
 
-            <div
-                role="tablist"
-                className="inline-flex w-fit rounded-xl bg-zinc-200 p-1 dark:bg-zinc-800"
-            >
-                <button
-                    type="button"
-                    role="tab"
-                    aria-selected={panel === "code"}
-                    onClick={() => useExplorerStore.setState({ panel: "code" })}
-                    className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                        panel === "code"
-                            ? "bg-zinc-100 text-neutral-900 shadow-sm dark:bg-zinc-700 dark:text-neutral-100"
-                            : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
-                    }`}
+            {!sources && (
+                <div
+                    role="tablist"
+                    className="inline-flex w-fit rounded-xl bg-zinc-200 p-1 dark:bg-zinc-800"
                 >
-                    <FileCode size={14} />
-                    <span className="max-sm:sr-only">Code</span>
-                </button>
-                <button
-                    type="button"
-                    role="tab"
-                    aria-selected={panel === "graph"}
-                    onClick={() =>
-                        useExplorerStore.setState({ panel: "graph" })
-                    }
-                    className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                        panel === "graph"
-                            ? "bg-zinc-100 text-neutral-900 shadow-sm dark:bg-zinc-700 dark:text-neutral-100"
-                            : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
-                    }`}
-                >
-                    <Network size={14} />
-                    <span className="max-sm:sr-only">Graph</span>
-                </button>
-            </div>
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={panel === "code"}
+                        onClick={() =>
+                            useExplorerStore.setState({ panel: "code" })
+                        }
+                        className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                            panel === "code"
+                                ? "bg-zinc-100 text-neutral-900 shadow-sm dark:bg-zinc-700 dark:text-neutral-100"
+                                : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+                        }`}
+                    >
+                        <FileCode size={14} />
+                        <span className="max-sm:sr-only">Code</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={panel === "graph"}
+                        onClick={() =>
+                            useExplorerStore.setState({ panel: "graph" })
+                        }
+                        className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                            panel === "graph"
+                                ? "bg-zinc-100 text-neutral-900 shadow-sm dark:bg-zinc-700 dark:text-neutral-100"
+                                : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+                        }`}
+                    >
+                        <Network size={14} />
+                        <span className="max-sm:sr-only">Graph</span>
+                    </button>
+                </div>
+            )}
 
             <div className="flex items-center gap-2">
-                <a
-                    href={bundleArchiveUrl(buildHash)}
-                    download={`${buildHash}.7z`}
-                    aria-label="Download bundle"
-                    title="Download bundle"
-                    className={iconButtonClass}
-                >
-                    <Download size={16} />
-                </a>
+                {!sources && (
+                    <a
+                        href={bundleArchiveUrl(buildHash)}
+                        download={`${buildHash}.7z`}
+                        aria-label="Download bundle"
+                        title="Download bundle"
+                        className={iconButtonClass}
+                    >
+                        <Download size={16} />
+                    </a>
+                )}
                 <button
                     type="button"
                     onClick={() => settingsRef.current?.showModal()}

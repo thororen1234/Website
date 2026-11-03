@@ -3,8 +3,10 @@ import { SERVER_BASE_URL } from "./config"
 import type { AndroidBuild } from "./types"
 import type { GetBuilds } from "./worker/builds.worker"
 import type { BundleWorkerApi } from "./worker/bundle.worker"
+import type { SourcesWorkerApi } from "./worker/sources.worker"
 
 export type BundleApi = comlink.Remote<BundleWorkerApi>
+export type SourcesApi = comlink.Remote<SourcesWorkerApi>
 
 let builds: comlink.Remote<GetBuilds> | undefined
 
@@ -43,4 +45,25 @@ export function getBundleApi(buildHash: string) {
     }
 
     return bundleApi
+}
+
+const sourcesApis = new Map<number, Promise<SourcesApi>>()
+
+export function getSourcesApi(versionCode: number) {
+    let sourcesApi = sourcesApis.get(versionCode)
+
+    if (!sourcesApi) {
+        const api = comlink.wrap<SourcesWorkerApi>(
+            new Worker(new URL("./worker/sources.worker.ts", import.meta.url), {
+                type: "module",
+                name: `discord-sources-${versionCode}`,
+            }),
+        )
+
+        sourcesApi = api.loadSources(versionCode).then(() => api)
+        sourcesApi.catch(() => sourcesApis.delete(versionCode))
+        sourcesApis.set(versionCode, sourcesApi)
+    }
+
+    return sourcesApi
 }

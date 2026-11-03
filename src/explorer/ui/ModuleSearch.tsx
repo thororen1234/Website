@@ -4,7 +4,7 @@ import { useExplorerStore } from "../store"
 import { useAsync, errorMessage } from "./useAsync"
 import VirtualList from "./VirtualList"
 
-function useDebounced<T>(value: T, delay: number) {
+export function useDebounced<T>(value: T, delay: number) {
     const [debounced, setDebounced] = useState(value)
 
     useEffect(() => {

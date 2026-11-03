@@ -11,7 +11,7 @@ import {
 
 type Editor = ReturnType<typeof monaco.editor.create>
 
-function applySearch(editor: Editor, { sl, sc, el, ec }: CodeSelection) {
+export function applySearch(editor: Editor, { sl, sc, el, ec }: CodeSelection) {
     if (sl == null || sc == null) return
 
     if (el == null || ec == null || (sl === el && sc === ec)) {

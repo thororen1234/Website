@@ -7,15 +7,7 @@ export interface CodeSelection {
 
 const selectionKeys = ["sl", "sc", "el", "ec"] as const
 
-export function moduleHref(
-    buildHash: string,
-    moduleId?: number | null,
-    selection: CodeSelection = {},
-) {
-    const path = `/discord/modules/${encodeURIComponent(buildHash)}${
-        moduleId == null ? "" : `/${moduleId}`
-    }`
-
+function withSelection(path: string, selection: CodeSelection) {
     const params = new URLSearchParams()
     for (const key of selectionKeys) {
         const value = selection[key]
@@ -26,6 +18,33 @@ export function moduleHref(
 
     const query = params.toString()
     return query ? `${path}?${query}` : path
+}
+
+export function moduleHref(
+    buildHash: string,
+    moduleId?: number | null,
+    selection: CodeSelection = {},
+) {
+    return withSelection(
+        `/discord/modules/${encodeURIComponent(buildHash)}${
+            moduleId == null ? "" : `/${moduleId}`
+        }`,
+        selection,
+    )
+}
+
+export function sourceHref(
+    buildHash: string,
+    path: string,
+    selection: CodeSelection = {},
+) {
+    return withSelection(
+        `/discord/modules/${encodeURIComponent(buildHash)}/${path
+            .split("/")
+            .map(encodeURIComponent)
+            .join("/")}`,
+        selection,
+    )
 }
 
 export function readSelection(params: URLSearchParams): CodeSelection {
@@ -45,4 +64,14 @@ export function readModuleId(moduleId: string[] | undefined) {
 
     const id = Number(value)
     return Number.isSafeInteger(id) && id >= 0 ? id : null
+}
+
+export function readSourcePath(segments: string[] | undefined) {
+    if (!segments?.length) return null
+
+    try {
+        return segments.map(decodeURIComponent).join("/")
+    } catch {
+        return null
+    }
 }

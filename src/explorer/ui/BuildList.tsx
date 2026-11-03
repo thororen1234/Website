@@ -96,7 +96,7 @@ export default function BuildList() {
                     filters={ANDROID_FILTERS}
                     keyOf={androidKey}
                     Card={AndroidCard}
-                    note="Android builds are decompiled from Hermes bytecode, so go to definition and find references don't work on them. Builds that haven't been decompiled yet download as a raw bundle."
+                    note="React Native Android builds are decompiled from Hermes bytecode, so go to definition and find references don't work on them. Older Kotlin builds open as Java sources decompiled by jadx. Builds that haven't been decompiled yet download as a raw bundle."
                 />
             )}
         </div>
@@ -362,6 +362,7 @@ function AndroidCard({
     build: AndroidBuild
     latest: boolean
 }) {
+    const explorable = Boolean(build.modules || build.sources)
     const content = (
         <>
             <div className="flex items-center gap-2">
@@ -369,7 +370,7 @@ function AndroidCard({
                     {build.version}
                 </span>
                 <Badges channels={build.channels} latest={latest} />
-                {build.modules ? (
+                {explorable ? (
                     <ArrowRight
                         size={16}
                         className="ml-auto shrink-0 text-neutral-500 transition-transform group-hover:translate-x-0.5 group-hover:text-rose-500"
@@ -385,14 +386,17 @@ function AndroidCard({
                 {dateFormat.format(new Date(build.firstSeen))}
             </span>
             <span className="truncate font-mono text-xs text-neutral-500">
-                {build.versionCode} · {formatBytes(build.bundleSize)}
+                {build.versionCode} ·{" "}
+                {build.sources
+                    ? `${build.sources.toLocaleString()} Java files`
+                    : formatBytes(build.bundleSize)}
                 {build.hermesVersion != null &&
                     ` · Hermes v${build.hermesVersion}`}
             </span>
         </>
     )
 
-    return build.modules ? (
+    return explorable ? (
         <Link
             href={moduleHref(androidBuildId(build.versionCode))}
             prefetch={false}

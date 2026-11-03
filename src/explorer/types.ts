@@ -17,6 +17,7 @@ export interface AndroidBuild {
     bundleSize: number
     hermesVersion: number | null
     modules?: number
+    sources?: number
 }
 
 export interface ModuleDeps {
@@ -71,4 +72,15 @@ export interface ModuleGraph {
         height: number
     }[]
     edges: { id: string; source: string; target: string }[]
+}
+
+export interface SourceMatch {
+    file: number
+    range: ModuleRange
+    preview: string
+}
+
+export interface SourceSearchResults {
+    matches: SourceMatch[]
+    capped: boolean
 }

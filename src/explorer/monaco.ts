@@ -19,14 +19,25 @@ self.MonacoEnvironment = {
     },
 }
 
-let setupPromise: Promise<void> | undefined
+let highlighterPromise: ReturnType<typeof createHighlighter> | undefined
+const setupPromises = new Map<string, Promise<void>>()
 
-export function setupMonaco() {
-    setupPromise ??= createHighlighter({
-        themes: editorThemes.map((theme) => theme.id),
-        langs: ["javascript"],
-        engine: createJavaScriptRegexEngine(),
-    }).then((highlighter) => shikiToMonaco(highlighter, monaco))
+// shikiToMonaco only adds tokenizers for the languages loaded so far, so it runs again for each new one
+export function setupMonaco(language: "javascript" | "java" = "javascript") {
+    let setupPromise = setupPromises.get(language)
+
+    if (!setupPromise) {
+        highlighterPromise ??= createHighlighter({
+            themes: editorThemes.map((theme) => theme.id),
+            langs: [],
+            engine: createJavaScriptRegexEngine(),
+        })
+        setupPromise = highlighterPromise.then(async (highlighter) => {
+            await highlighter.loadLanguage(language)
+            shikiToMonaco(highlighter, monaco)
+        })
+        setupPromises.set(language, setupPromise)
+    }
 
     return setupPromise
 }
