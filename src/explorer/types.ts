@@ -16,6 +16,7 @@ export interface AndroidBuild {
     channels: AndroidChannel[]
     bundleSize: number
     hermesVersion: number | null
+    modules?: number
 }
 
 export interface ModuleDeps {

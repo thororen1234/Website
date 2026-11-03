@@ -10,7 +10,7 @@ import {
 import Link from "next/link"
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react"
 import { getAndroidBuilds, getBuilds } from "../api"
-import { androidBundleUrl } from "../config"
+import { androidBuildId, androidBundleUrl } from "../config"
 import { moduleHref } from "../routes"
 import type {
     AndroidBuild,
@@ -95,7 +95,7 @@ export default function BuildList() {
                     filters={ANDROID_FILTERS}
                     keyOf={androidKey}
                     Card={AndroidCard}
-                    note="Android builds ship Hermes bytecode, so they download as a raw bundle instead of opening in the explorer."
+                    note="Android builds are decompiled from Hermes bytecode, so go to definition and find references don't work on them. Builds that haven't been decompiled yet download as a raw bundle."
                 />
             )}
         </div>
@@ -329,17 +329,24 @@ function AndroidCard({
     build: AndroidBuild
     latest: boolean
 }) {
-    return (
-        <a href={androidBundleUrl(build.versionCode)} className={cardClass}>
+    const content = (
+        <>
             <div className="flex items-center gap-2">
                 <span className="text-lg font-semibold text-neutral-800 tabular-nums dark:text-neutral-200">
                     {build.version}
                 </span>
                 <Badges channels={build.channels} latest={latest} />
-                <Download
-                    size={16}
-                    className="ml-auto shrink-0 text-neutral-500 transition-transform group-hover:translate-y-0.5 group-hover:text-rose-500"
-                />
+                {build.modules ? (
+                    <ArrowRight
+                        size={16}
+                        className="ml-auto shrink-0 text-neutral-500 transition-transform group-hover:translate-x-0.5 group-hover:text-rose-500"
+                    />
+                ) : (
+                    <Download
+                        size={16}
+                        className="ml-auto shrink-0 text-neutral-500 transition-transform group-hover:translate-y-0.5 group-hover:text-rose-500"
+                    />
+                )}
             </div>
             <span className="text-sm text-neutral-600 tabular-nums dark:text-neutral-400">
                 {dateFormat.format(new Date(build.firstSeen))}
@@ -349,6 +356,20 @@ function AndroidCard({
                 {build.hermesVersion != null &&
                     ` · Hermes v${build.hermesVersion}`}
             </span>
+        </>
+    )
+
+    return build.modules ? (
+        <Link
+            href={moduleHref(androidBuildId(build.versionCode))}
+            prefetch={false}
+            className={cardClass}
+        >
+            {content}
+        </Link>
+    ) : (
+        <a href={androidBundleUrl(build.versionCode)} className={cardClass}>
+            {content}
         </a>
     )
 }
