@@ -18,6 +18,7 @@ import type {
     Build,
     ReleaseChannel,
 } from "../types"
+import DatePicker, { dayKey, formatDateValue } from "./DatePicker"
 import { errorMessage, useAsync } from "./useAsync"
 
 const dateFormat = new Intl.DateTimeFormat(undefined, {
@@ -158,6 +159,7 @@ function Builds<
     const builds = useAsync(load)
     const [count, setCount] = useState(PAGE_SIZE)
     const [filter, setFilter] = useState<Filter<C>>("all")
+    const [date, setDate] = useState<string | null>(null)
     const sentinel = useRef<HTMLDivElement>(null)
 
     const sorted = useMemo(
@@ -185,12 +187,29 @@ function Builds<
         return keys
     }, [sorted, keyOf])
 
-    const filtered = useMemo(
+    const inChannel = useMemo(
         () =>
             filter === "all"
                 ? sorted
                 : sorted.filter((build) => build.channels.includes(filter)),
         [sorted, filter],
+    )
+    const dayCounts = useMemo(() => {
+        const counts: Record<string, number> = {}
+        for (const build of inChannel) {
+            const key = dayKey(build.firstSeen)
+            counts[key] = (counts[key] ?? 0) + 1
+        }
+        return counts
+    }, [inChannel])
+    const filtered = useMemo(
+        () =>
+            date
+                ? inChannel.filter((build) =>
+                      dayKey(build.firstSeen).startsWith(date),
+                  )
+                : inChannel,
+        [inChannel, date],
     )
     const hasMore = filtered.length > count
 
@@ -230,17 +249,27 @@ function Builds<
 
     return (
         <>
-            {hasChannels && (
-                <Tabs
-                    label="Release channel"
-                    options={filters}
-                    value={filter}
+            <div className="flex flex-wrap items-center gap-2">
+                {hasChannels && (
+                    <Tabs
+                        label="Release channel"
+                        options={filters}
+                        value={filter}
+                        onChange={(value) => {
+                            setFilter(value)
+                            setCount(PAGE_SIZE)
+                        }}
+                    />
+                )}
+                <DatePicker
+                    value={date}
                     onChange={(value) => {
-                        setFilter(value)
+                        setDate(value)
                         setCount(PAGE_SIZE)
                     }}
+                    counts={dayCounts}
                 />
-            )}
+            </div>
 
             {note && <p className={mutedClass}>{note}</p>}
 
@@ -256,7 +285,11 @@ function Builds<
                     ))}
                 </ul>
             ) : (
-                <p className={mutedClass}>No {filter} builds right now.</p>
+                <p className={mutedClass}>
+                    {date
+                        ? `No ${filter === "all" ? "" : filter} builds from ${formatDateValue(date)}.`
+                        : `No ${filter} builds right now.`}
+                </p>
             )}
 
             {hasMore && <div ref={sentinel} className="h-px" />}
